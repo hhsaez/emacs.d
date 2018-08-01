@@ -7,9 +7,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (tango-dark)))
+ '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
+	(fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
  '(tool-bar-mode nil)
  '(transient-mark-mode (quote (only . t))))
 (custom-set-faces
@@ -64,4 +65,11 @@
 
 ;; Enable line numbers
 (global-linum-mode t)
+
+;; Start maximized
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+;; Start with split window
+(split-window-horizontally)
+
 

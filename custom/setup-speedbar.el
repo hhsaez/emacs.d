@@ -4,7 +4,7 @@
 (setq speedbar-show-unknown-files t)
 ;; (setq speedbar-use-images nil)
 (setq sr-speedbar-right-side nil)
-(global-set-key (kbd "s-s") 'sr-speedbar-toggle)
+;; (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
 
 (provide 'setup-speedbar)
 
