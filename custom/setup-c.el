@@ -10,7 +10,7 @@
     (c-add-style "mine" '("stroustrup"
 			  (c-offsets-alist
 			   (substatement-open . 0)
-			   (statement-cont . 0)
+			   (statement-cont . +)
 			   (innamespace . +)
 			   (inline-open . 0)
 			   (inlambda . 0)
