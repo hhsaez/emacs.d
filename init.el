@@ -72,5 +72,5 @@
 ;; Start with split window
 (split-window-horizontally)
 
-(set-face-attribute 'default nil :height 150)
+(set-face-attribute 'default nil :height 130)
 
