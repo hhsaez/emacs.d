@@ -10,13 +10,14 @@
     (c-add-style "mine" '("stroustrup"
 			  (c-offsets-alist
 			   (substatement-open . 0)
-			   (statement-cont . +)
+			   (statement-cont . 0)
 			   (innamespace . +)
 			   (inline-open . 0)
 			   (inlambda . 0)
 			   (inher-cont . c-lineup-multi-inher)
 			   (arglist-intro . +)
 			   (arglist-cont-nonempty . 0)
+			   (arglist-close . 0)
 			   (case-label . +)
 			   (template-args-cont . 0))))
     (setq c-default-style "mine")
