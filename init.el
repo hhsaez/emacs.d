@@ -10,7 +10,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
+	(lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
  '(tool-bar-mode nil)
  '(transient-mark-mode (quote (only . t))))
 (custom-set-faces
@@ -49,6 +49,7 @@
 ;; load custom scripts
 (require 'setup-general)
 (require 'setup-autocomplete)
+(require 'setup-projectile)
 (require 'setup-c)
 (require 'setup-lua)
 (require 'setup-speedbar)

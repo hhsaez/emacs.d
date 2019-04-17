@@ -1,3 +1,6 @@
+(unless (package-installed-p 'lua-mode)
+  (package-install 'lua-mode))
+
 (defun my-lua-mode-hook ()
   (setq lua-indent-level 4)
 
