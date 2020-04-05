@@ -55,6 +55,7 @@
 (require 'setup-speedbar)
 (require 'setup-git)
 (require 'setup-helm)
+;; (require 'setup-glsl)
 
 ;; Disable backup files
 (setq make-backup-files nil)
@@ -73,5 +74,5 @@
 ;; Start with split window
 (split-window-horizontally)
 
-(set-face-attribute 'default nil :height 120)
+(set-face-attribute 'default nil :height 150)
 
