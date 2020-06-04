@@ -3,6 +3,7 @@
 
 ;; Package: projectile
 (use-package projectile
+  :diminish
   :init
   (setq projectile-keymap-prefix (kbd "C-c p"))
   :config

@@ -10,7 +10,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
+	(glsl-mode dashboard beacon dimmer posframe rtags lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
  '(tool-bar-mode nil)
  '(transient-mark-mode (quote (only . t))))
 (custom-set-faces
@@ -18,7 +18,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(dashboard-heading ((t (:foreground "#f1fa8c" :weight bold))))
+ '(minimap-active-region-background ((((background dark)) (:background "#555555555555")) (t (:background "#C847D8FEFFFF"))) nil (quote minimap)))
 
 ;; Configure MELPA
 (require 'package)
@@ -34,8 +35,11 @@
 (when (not package-archive-contents)
     (package-refresh-contents))
 
+;; Configure use-package
 (unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package)
+  (package-install 'diminish))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -48,6 +52,7 @@
 
 ;; load custom scripts
 (require 'setup-general)
+(require 'setup-os)
 (require 'setup-autocomplete)
 (require 'setup-projectile)
 (require 'setup-c)
@@ -55,7 +60,11 @@
 (require 'setup-speedbar)
 (require 'setup-git)
 (require 'setup-helm)
-;; (require 'setup-glsl)
+(require 'setup-minimap)
+(require 'setup-dashboard)
+(require 'setup-glsl)
+;; (require 'setup-rtags)
+;; (require 'setup-cmake-ide)
 
 ;; Disable backup files
 (setq make-backup-files nil)
@@ -72,7 +81,7 @@
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 ;; Start with split window
-(split-window-horizontally)
+;;(split-window-horizontally)
 
-(set-face-attribute 'default nil :height 150)
+(set-face-attribute 'default nil :height 130)
 

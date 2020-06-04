@@ -10,7 +10,7 @@
   (use-package fuzzy
 	:ensure t
 	:config
-	(setq ac-fuzzy-enable 1)
+	(setq ac-fuzzy-enable t)
 	)
   )
 

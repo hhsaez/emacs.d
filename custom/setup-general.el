@@ -23,5 +23,43 @@
 
 (setq auto-window-vscroll nil)
 
+;; Delete selection when inserting
+(use-package delsel
+  :hook (after-init . delete-selection-mode))
+
+;; Automatically reload files if they're modified by an external program
+(use-package autorevert
+  :diminish
+  :hook (after-init . global-auto-revert-mode))
+
+;; Posframe (for buffer pop-ups)
+(use-package posframe)
+
+;; Dimmer (for dimming inactive buffers)
+(use-package dimmer
+  :disabled
+  :custom
+  (dimmer-fraction 0.5)
+  (dimmer-exclusion-regexp-list
+   '(".*Minibuf.*"
+	 ".*which-key.*"
+	 ".*NeoTree.*"
+	 ".*Messages.*"
+	 ".*Async.*"
+	 ".*Warnings.*"
+	 ".*LV.*"
+	 ".*Ilist.*"))
+  :config
+  (dimmer-mode t))
+
+;; Cursor highlight
+(use-package beacon
+  :custom
+  (beacon-color "#f1fa8c")
+  :hook (after-init . beacon-mode))
+
+;; Disable scrollbars
+(toggle-scroll-bar nil)
+
 (provide 'setup-general)
 
