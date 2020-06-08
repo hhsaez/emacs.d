@@ -61,5 +61,9 @@
 ;; Disable scrollbars
 (toggle-scroll-bar nil)
 
+;; Split windows in Emacs 22 compatible way
+(setq split-height-threshold nil)
+(setq split-width-threshold most-positive-fixnum)
+
 (provide 'setup-general)
 

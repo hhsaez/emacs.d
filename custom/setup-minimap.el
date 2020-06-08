@@ -4,6 +4,7 @@
   (minimap-window-location 'right)
   (minimap-update-delay 0.2)
   (minimap-minimum-width 20)
+  (minimap-width-fraction 0.05)
   :config
   (custom-set-faces
    '(minimap-active-region-background
