@@ -65,5 +65,8 @@
 (setq split-height-threshold nil)
 (setq split-width-threshold most-positive-fixnum)
 
+;; Trim whitespaces before saving
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 (provide 'setup-general)
 
