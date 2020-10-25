@@ -22,18 +22,31 @@
 			   (template-args-cont . 0))))
     (setq c-default-style "mine")
     (c-set-style "mine"))
-  
+
   ;; disable indentation
   ;; (setq c-syntactic-indentation nil)
-  
-  ;; (setq c++-tab-always-indent t)
+
+  ;; (setq c++-tab-always-indent nil)
   ;; (setq c-indent-level 4)
-  
+
   ;; (setq tab-width 4)
-  ;; (setq indent-tabs-mode t)))
+  ;; (setq indent-tabs-mode nil)
   )
 
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+
+(global-set-key (kbd "<backtab>") 'un-indent-by-removing-4-spaces)
+(defun un-indent-by-removing-4-spaces ()
+  "remove 4 spaces from beginning of of line"
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (beginning-of-line)
+      ;; get rid of tabs at beginning of line
+      (when (looking-at "^\\s-+")
+        (untabify (match-beginning 0) (match-end 0)))
+      (when (looking-at "^    ")
+        (replace-match "")))))
 
 (defun my-compilation-mode-hook ()
   (setq truncate-lines nil) ;; automatically becomes buffer local
@@ -41,4 +54,3 @@
 (add-hook 'compilation-mode-hook 'my-compilation-mode-hook)
 
 (provide 'setup-c)
-

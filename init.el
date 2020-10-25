@@ -7,44 +7,71 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(beacon-color "#f1fa8c" t)
- '(custom-enabled-themes (quote (tango-dark)))
+ '(custom-enabled-themes '(tango-dark))
  '(custom-safe-themes
-   (quote
-    ("2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" default)))
- '(dashboard-center-content t t)
- '(dashboard-items (quote ((recents . 15) (projects . 5) (bookmarks . 5))) t)
- '(dashboard-startup-banner 3 t)
+   '("2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" default))
+ '(dashboard-center-content t)
+ '(dashboard-items '((recents . 15) (projects . 5) (bookmarks . 5)))
+ '(dashboard-startup-banner 3)
  '(exec-path-from-shell-check-startup-files nil)
- '(exec-path-from-shell-variables (quote ("PATH" "GOPATH")))
+ '(exec-path-from-shell-variables '("PATH" "GOPATH"))
+ '(fci-rule-color "#5B6268")
  '(inhibit-startup-screen t)
+ '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#51afef"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#98be65"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#3f444a"))
  '(minimap-automatically-delete-window nil)
  '(minimap-minimum-width 20 nil nil "Customized with use-package minimap")
  '(minimap-update-delay 0.2 nil nil "Customized with use-package minimap")
  '(minimap-width-fraction 0.05 nil nil "Customized with use-package minimap")
- '(minimap-window-location (quote right) nil nil "Customized with use-package minimap")
+ '(minimap-window-location 'right nil nil "Customized with use-package minimap")
+ '(objed-cursor-color "#ff6c6b")
  '(package-selected-packages
-   (quote
-    (doom-modeline doom-themes treemacs glsl-mode dashboard beacon dimmer posframe rtags lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar)))
- '(recentf-auto-cleanup (quote never) t)
+   '(treemacs-magit clang-format doom-modeline doom-themes treemacs glsl-mode dashboard beacon dimmer posframe rtags lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar))
+ '(pdf-view-midnight-colors (cons "#bbc2cf" "#282c34"))
+ '(recentf-auto-cleanup 'never)
  '(recentf-exclude
-   (quote
-    ((expand-file-name package-user-dir)
-     ".cache" "cache" "recentf" "COMMIT_EDITMSG\\'")) t)
- '(recentf-max-saved-items 20000000 t)
+   '((expand-file-name package-user-dir)
+     ".cache" "cache" "recentf" "COMMIT_EDITMSG\\'"))
+ '(recentf-max-saved-items 20000000)
+ '(rustic-ansi-faces
+   ["#282c34" "#ff6c6b" "#98be65" "#ECBE7B" "#51afef" "#c678dd" "#46D9FF" "#bbc2cf"])
  '(tool-bar-mode nil)
- '(transient-mark-mode (quote (only . t))))
+ '(transient-mark-mode '(only . t))
+ '(vc-annotate-background "#282c34")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#98be65")
+    (cons 40 "#b4be6c")
+    (cons 60 "#d0be73")
+    (cons 80 "#ECBE7B")
+    (cons 100 "#e6ab6a")
+    (cons 120 "#e09859")
+    (cons 140 "#da8548")
+    (cons 160 "#d38079")
+    (cons 180 "#cc7cab")
+    (cons 200 "#c678dd")
+    (cons 220 "#d974b7")
+    (cons 240 "#ec7091")
+    (cons 260 "#ff6c6b")
+    (cons 280 "#cf6162")
+    (cons 300 "#9f585a")
+    (cons 320 "#6f4e52")
+    (cons 340 "#5B6268")
+    (cons 360 "#5B6268")))
+ '(vc-annotate-very-old-color nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(dashboard-heading ((t (:foreground "#f1fa8c" :weight bold))))
- '(minimap-active-region-background ((((background dark)) (:background "#555555555555")) (t (:background "#C847D8FEFFFF"))) nil (quote minimap)))
+ '(minimap-active-region-background ((((background dark)) (:background "#555555555555")) (t (:background "#C847D8FEFFFF"))) nil 'minimap))
 
 ;; Configure MELPA
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
+			 '("melpa" . "http://melpa.org/packages/") t)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -87,6 +114,7 @@
 ;; (require 'setup-cmake-ide)
 (require 'setup-treemacs)
 (require 'setup-themes)
+(require 'setup-clang-format)
 
 ;; Disable backup files
 (setq make-backup-files nil)
