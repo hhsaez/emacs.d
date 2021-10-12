@@ -11,7 +11,7 @@
 (when (equal system-type 'darwin)
   ;(setq mac-option-modifier 'super)
   ;(setq mac-command-modifier 'meta)
-  (setq ns-auto-hide-menu-bar t)
+  (setq ns-auto-hide-menu-bar nil)
   (setq ns-use-proxy-icon nil)
   (setq dired-use-ls-dired nil)
   (setq initial-frame-alist
@@ -26,4 +26,3 @@
   :hook (dashboard-mode . (turn-on-pbcopy)))
 
 (provide 'setup-os)
-

@@ -6,34 +6,34 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(beacon-color "#f1fa8c" t)
+ '(beacon-color "#f1fa8c" nil nil "Customized with use-package beacon")
  '(custom-enabled-themes '(tango-dark))
  '(custom-safe-themes
-   '("2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" default))
- '(dashboard-center-content t)
- '(dashboard-items '((recents . 15) (projects . 5) (bookmarks . 5)))
- '(dashboard-startup-banner 3)
- '(exec-path-from-shell-check-startup-files nil)
- '(exec-path-from-shell-variables '("PATH" "GOPATH"))
+   '("835868dcd17131ba8b9619d14c67c127aa18b90a82438c8613586331129dda63" "2f1518e906a8b60fac943d02ad415f1d8b3933a5a7f75e307e6e9a26ef5bf570" default))
+ '(dashboard-center-content t nil nil "Customized with use-package dashboard")
+ '(dashboard-items '((recents . 15) (projects . 5) (bookmarks . 5)) nil nil "Customized with use-package dashboard")
+ '(dashboard-startup-banner 3 nil nil "Customized with use-package dashboard")
+ '(exec-path-from-shell-check-startup-files nil nil nil "Customized with use-package exec-path-from-shell")
+ '(exec-path-from-shell-variables '("PATH" "GOPATH") nil nil "Customized with use-package exec-path-from-shell")
  '(fci-rule-color "#5B6268")
  '(inhibit-startup-screen t)
  '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#51afef"))
  '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#98be65"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#3f444a"))
- '(minimap-automatically-delete-window nil)
+ '(minimap-automatically-delete-window nil nil nil "Customized with use-package minimap")
  '(minimap-minimum-width 20 nil nil "Customized with use-package minimap")
  '(minimap-update-delay 0.2 nil nil "Customized with use-package minimap")
  '(minimap-width-fraction 0.05 nil nil "Customized with use-package minimap")
  '(minimap-window-location 'right nil nil "Customized with use-package minimap")
  '(objed-cursor-color "#ff6c6b")
  '(package-selected-packages
-   '(treemacs-magit clang-format doom-modeline doom-themes treemacs glsl-mode dashboard beacon dimmer posframe rtags lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar))
+   '(writeroom-mode whiteroom-mode treemacs-magit clang-format doom-modeline doom-themes treemacs glsl-mode dashboard beacon dimmer posframe rtags lua-mode projectile fuzzy helm-projectile helm-swoop helm json-mode git-blame git auto-complete company-c-headers use-package company-irony-c-headers company-lua company sr-speedbar))
  '(pdf-view-midnight-colors (cons "#bbc2cf" "#282c34"))
- '(recentf-auto-cleanup 'never)
+ '(recentf-auto-cleanup 'never nil nil "Customized with use-package recentf")
  '(recentf-exclude
    '((expand-file-name package-user-dir)
-     ".cache" "cache" "recentf" "COMMIT_EDITMSG\\'"))
- '(recentf-max-saved-items 20000000)
+     ".cache" "cache" "recentf" "COMMIT_EDITMSG\\'") t nil "Customized with use-package recentf")
+ '(recentf-max-saved-items 20000000 nil nil "Customized with use-package recentf")
  '(rustic-ansi-faces
    ["#282c34" "#ff6c6b" "#98be65" "#ECBE7B" "#51afef" "#c678dd" "#46D9FF" "#bbc2cf"])
  '(tool-bar-mode nil)
@@ -115,6 +115,7 @@
 (require 'setup-treemacs)
 (require 'setup-themes)
 (require 'setup-clang-format)
+(require 'setup-zen)
 
 ;; Disable backup files
 (setq make-backup-files nil)
@@ -125,7 +126,7 @@
 ;; (setq ido-enable-flex-matching t)
 
 ;; Enable line numbers
-(global-linum-mode t)
+(global-linum-mode 0)
 
 ;; Start maximized
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
@@ -136,4 +137,4 @@
 ;; Indent with spaces
 (setq-default indent-tabs-mode nil)
 
-(set-face-attribute 'default nil :height 130)
+(set-face-attribute 'default nil :height 120)
