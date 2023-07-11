@@ -2,3 +2,7 @@ auto-save-list
 config.el
 *.*~
 elpaca/
+eshell
+recentf
+projectile-bookmarks.eld
+.DS_Store

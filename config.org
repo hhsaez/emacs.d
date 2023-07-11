@@ -2,20 +2,33 @@
 #+AUTHOR: Hernan Saez (hhsaez)
 #+DESCRIPTION: Hernan's personal Emacs config.
 #+STARTUP: showeverything
-#+OPTIONS: toc:2
+#+OPTIONS: toc:4
 
 * TABLE OF CONTENTS :toc:
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
-  - [[#load-evil-mode][Load Evil Mode]]
-  - [[#general-keybindings][General Keybindings]]
+- [[#all-the-icons][ALL THE ICONS]]
+- [[#company][COMPANY]]
+- [[#dashboard][DASHBOARD]]
+- [[#diminish][DIMINISH]]
+- [[#flycheck][FLYCHECK]]
 - [[#fonts][FONTS]]
+  - [[#setting-the-font-face][Setting the Font Face]]
+  - [[#zooming-inout][Zooming In/Out]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+- [[#ivy-counsel][IVY (COUNSEL)]]
 - [[#org-mode][ORG MODE]]
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
+  - [[#disable-electric-indent][Disable Electric indent]]
+- [[#projectile][PROJECTILE]]
+- [[#shells-and-terminals][SHELLS AND TERMINALS]]
+  - [[#eshell][Eshell]]
+- [[#reload-emacs][RELOAD EMACS]]
+- [[#themes][THEMES]]
+- [[#visuals][VISUALS]]
 - [[#which-key][WHICH-KEY]]
 
 * IMPORTANT PROGRAMS TO LOAD FIRST
@@ -26,31 +39,31 @@
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
   (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
   (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-				:ref nil
-				:files (:defaults (:exclude "extensions"))
-				:build (:not elpaca--activate-package)))
+                                :ref nil
+                                :files (:defaults (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
   (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-	 (build (expand-file-name "elpaca/" elpaca-builds-directory))
-	 (order (cdr elpaca-order))
-	 (default-directory repo))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
     (add-to-list 'load-path (if (file-exists-p build) build repo))
     (unless (file-exists-p repo)
       (make-directory repo t)
       (when (< emacs-major-version 28) (require 'subr-x))
       (condition-case-unless-debug err
-	  (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-		   ((zerop (call-process "git" nil buffer t "clone"
-					 (plist-get order :repo) repo)))
-		   ((zerop (call-process "git" nil buffer t "checkout"
-					 (or (plist-get order :ref) "--"))))
-		   (emacs (concat invocation-directory invocation-name))
-		   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-					 "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-		   ((require 'elpaca))
-		   ((elpaca-generate-autoloads "elpaca" repo)))
-	      (kill-buffer buffer)
-	    (error "%s" (with-current-buffer buffer (buffer-string))))
-	((error) (warn "%s" err) (delete-directory repo 'recursive))))
+          (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                   ((zerop (call-process "git" nil buffer t "clone"
+                                         (plist-get order :repo) repo)))
+                   ((zerop (call-process "git" nil buffer t "checkout"
+                                         (or (plist-get order :ref) "--"))))
+                   (emacs (concat invocation-directory invocation-name))
+                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                   ((require 'elpaca))
+                   ((elpaca-generate-autoloads "elpaca" repo)))
+              (kill-buffer buffer)
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
     (unless (require 'elpaca-autoloads nil t)
       (require 'elpaca)
       (elpaca-generate-autoloads "elpaca" repo)
@@ -60,10 +73,10 @@
 
   ;; Install use-package support
   (elpaca elpaca-use-package
-	  ;; Enable :elpaca use-package keyword.
-	  (elpaca-use-package-mode)
-	  ;; Assume :elpaca t unless otherwise specified.
-	  (setq elpaca-use-package-by-default t))
+          ;; Enable :elpaca use-package keyword.
+          (elpaca-use-package-mode)
+          ;; Assume :elpaca t unless otherwise specified.
+          (setq elpaca-use-package-by-default t))
 
   ;; Block until current queue processed.
   (elpaca-wait)
@@ -84,39 +97,132 @@
   (elpaca nil (message "deferred"))
 #+END_SRC
 
-** Load Evil Mode
-** General Keybindings
+* ALL THE ICONS
+ This is an icon set that can be used with dashboard, dired, ibuffer and other Emacs programs.
+  
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+END_SRC
+
+* COMPANY
+Company is a text completion framework for Emacs. The name stands for "complete anything". Completion will start automatically after you type a few letters. Use M-n and M-p to select, <return> to complete or <tab> to complete the common part.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :defer 2
+    :diminish
+    :custom
+    (company-begin-commands '(self-insert-command))
+    (company-idle-delay .1)
+    (company-minimum-prefix-length 2)
+    (company-show-numbers t)
+    (company-tooltip-align-annotations 't)
+    (global-company-mode t))
+
+  (use-package company-box
+    :after company
+    :diminish
+    :hook (company-mode . company-box-mode))
+#+END_SRC
+
+* DASHBOARD
+Emacs Dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an Emacs banner.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (setq initial-buffer-choice 'dashboard-open)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "Fly Me To The Moon!")
+    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    (setq dashboard-startup-banner (concat user-emacs-directory "le-voyage-dans-la-lune.jpg")) ;; use custom image
+    (setq dashboard-image-banner-max-height 140)
+    (setq dashboard-center-content t) ;; set to 't' for centered content
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5)
+                            (bookmarks . 3)
+                            (projects . 3) ;; Requires "projectile"
+                            (registers .. 3)))
+    (dashboard-modify-heading-icons '((recents . "file-text")
+                                      (bookmarks . "book")))
+    :config
+    (dashboard-setup-startup-hook))
+#+END_SRC
+
+* DIMINISH
+This package implements hiding or abbreviation of the modeline displays (lighters) of minor-mode. With this package installed, you can add ':diminish' to any use-package block to hide that particular mode in the modeline.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish)
+#+END_SRC
+
+* FLYCHECK
+Flycheck is a modern on-the-fly syntax checking extension for GNU Emacs, intended as replacement of the older Flymake extension which is part of GNU Emacs. More information at: https://www.flycheck.org/en/latest/
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :defer t
+    :diminish ;; don't show minor mode in modeline
+    :init (global-flycheck-mode))
+#+END_SRC
+
+On MacOS, also add the following to fix your $PATH environment variable
+
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package exec-path-from-shell)
+  ;;(exec-path-from-shell-initialize)
+#+END_SRC
 
 * FONTS
+Defining the various fonts that Emacs will use.
+
+** Setting the Font Face
 #+BEGIN_SRC emacs-lisp
   (set-face-attribute 'default nil
-    :font "JetBrains Mono"
-    :height 110
-    :weight 'medium)
+                      :font "JetBrains Mono"
+                      :height 130
+                      :weight 'medium)
   (set-face-attribute 'variable-pitch nil
-    :font "Ubuntu"
-    :height 120
-    :weight 'medium)
+                      :font "Ubuntu"
+                      :height 140
+                      :weight 'medium)
   (set-face-attribute 'fixed-pitch nil
-    :font "JetBrains Mono"
-    :height 110
-    :weight 'medium)
+                      :font "JetBrains Mono"
+                      :height 130
+                      :weight 'medium)
   ;; Makes commented text and keywords italics.
   ;; This is working in emacsclient but not emacs.
   ;; Your font must have an italic face available.
   (set-face-attribute 'font-lock-comment-face nil
-    :slant 'italic)
+                      :slant 'italic)
   (set-face-attribute 'font-lock-keyword-face nil
-    :slant 'italic)
+                      :slant 'italic)
 
   ;; This sets the default font on all graphical frames created after restarting Emacs.
   ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
   ;; are not right unless I also add this method of setting the default font.
-  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-11"))
+  (add-to-list 'default-frame-alist '(font . "JetBrains Mono-14"))
 
   ;; Uncomment the following line if line spacing needs adjusting.
-  (setq-default line-spacing 0.12)
+  (setq-default line-spacing 0.15)
 #+END_SRC
+
+** Zooming In/Out
+You can use the bindings CTRL plus =/- for zooming in/out. You can also use CTRL plus the mouse wheel for zooming in/out.
+#+BEGIN_SOURCE emacs-lisp
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+#+END_SOURCE
 
 * GRAPHICAL USER INTERFACE TWEAKS
 Let's make GPU Emacs look a little better
@@ -132,6 +238,42 @@ Let's make GPU Emacs look a little better
 #+BEGIN_SRC emacs-lisp
   (global-display-line-numbers-mode 1)
   (global-visual-line-mode t)
+#+END_SRC
+
+* IVY (COUNSEL)
++ Ivy, a generic completion mechanism for Emacs.
++ Counsel, a collection of Ivy-enhanced versions of common Emacs commands.
++ Ivy-rich allows us to add descriptions alongside the commands in M-x.
+
+#+BEGIN_SRC emacs-lisp
+   (use-package counsel
+     :after ivy
+     :config (counsel-mode))
+
+  (use-package ivy
+    :bind
+    ;; ivy-resume resumes the last Ivy-based completion.
+    (("C-c C-r" . ivy-resume)
+     ("C-x B" . ivy-switch-buffer-other-window))
+    :custom
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq enable-recursive-minibuffers t)
+    :config
+    (ivy-mode))
+
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
+
+  (use-package ivy-rich
+    :after ivy
+    :ensure t
+    :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev))
 #+END_SRC
 
 * ORG MODE
@@ -151,23 +293,92 @@ Org-bullets gives us attractive bullets rather than asterisks.
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
+** Disable Electric indent
+Org mode source blocks have some really weird and annoying default indentation behavior. It seems to be caused
+by electric-indent-mode turned on by default in Emacs. Let's turn it off.
+
+#+BEGIN_SRC emacs-lisp
+  (electric-indent-mode -1)
+#+END_SRC
+
+* PROJECTILE
+Projectile is a project interaction library for Emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+               :config
+               (projectile-mode 1))
+#+END_SRC
+
+* SHELLS AND TERMINALS
+
+** Eshell
+Eshell is an Emacs 'shell' that is written in Elisp.
+
+#+begin_src emacs-lisp
+(use-package eshell-syntax-highlighting
+  :after esh-mode
+  :config
+  (eshell-syntax-highlighting-global-mode +1))
+
+;; eshell-syntax-highlighting -- adds fish/zsh-like syntax highlighting.
+;; eshell-rc-script -- your profile for eshell; like a bashrc for eshell.
+;; eshell-aliases-file -- sets an aliases file for the eshell.
+  
+(setq eshell-rc-script (concat user-emacs-directory "eshell/profile")
+      eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
+      eshell-history-size 5000
+      eshell-buffer-maximum-lines 5000
+      eshell-hist-ignoredups t
+      eshell-scroll-to-bottom-on-input t
+      eshell-destroy-buffer-when-process-dies t
+      eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
+#+end_src
+
+* RELOAD EMACS
+Use this function to reload Emacs after adding changes to the config.
+
+#+BEGIN_SRC emacs-lisp
+(defun reload-init-file ()
+(interactive)
+(load-file user-init-file)
+(load-file user-init-file))
+#+END_SRC
+
+* THEMES
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'hhsaez t)
+#+END_SRC
+
+* VISUALS
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default
+   ;; By default, Emacs will try to resize itself to specific column size. This is not ideal when using a tiling window manager.
+   frame-inhibit-implied-resize t
+  )
+#+END_SRC
+
 * WHICH-KEY
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :init
-      (which-key-mode 1)
+    (which-key-mode 1)
+    :diminish
     :config
     (setq which-key-side-window-location 'bottom
-	    which-key-sort-order #'which-key-key-order-alpha
-	    which-key-sort-uppercase-first nil
-	    which-key-add-column-padding 1
-	    which-key-max-display-columns nil
-	    which-key-min-display-lines 6
-	    which-key-side-window-slot -10
-	    which-key-side-window-max-height 0.25
-	    which-key-idle-delay 0.8
-	    which-key-max-description-length 25
-	    which-key-allow-imprecise-window-fit t
-	    which-key-separator " → " ))
+            which-key-sort-order #'which-key-key-order-alpha
+            which-key-sort-uppercase-first nil
+            which-key-add-column-padding 1
+            which-key-max-display-columns nil
+            which-key-min-display-lines 6
+            which-key-side-window-slot -10
+            which-key-side-window-max-height 0.25
+            which-key-idle-delay 0.8
+            which-key-max-description-length 25
+            which-key-allow-imprecise-window-fit t
+            which-key-separator " → " ))
 #+END_SRC
 
