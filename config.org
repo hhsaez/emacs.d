@@ -8,6 +8,7 @@
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
 - [[#all-the-icons][ALL THE ICONS]]
+- [[#backup-files][BACKUP FILES]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
 - [[#diminish][DIMINISH]]
@@ -112,6 +113,13 @@
 
 (use-package all-the-icons-dired
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+END_SRC
+
+* BACKUP FILES
+
+Disable backup files by default
+#+BEGIN_SRC emacs-lisp
+(setq make-backup-files nil)
 #+END_SRC
 
 * COMPANY
@@ -419,20 +427,20 @@ Use this function to reload Emacs after adding changes to the config.
 * THEMES
 
 Designates the directory where will place all of our themes. 
-
-Also, install themes from *doom-themes* so we can switch to a different one if we want to
-
 Now, select our chosen theme, which is *hhsaez* by default, a theme that I created with the help of Emacs Theme Editor.
-
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  ;;(load-theme 'hhsaez t)
+#+END_SRC
 
+Also, install themes from *doom-themes* so we can switch to a different one if we want to
+#+BEGIN_SRC emacs-lisp
   (use-package doom-themes
+    :ensure t
     :config
     (setq doom-themes-enable-bold t ; if nil, bold is universally disabled
-          doom-themes-enable-italic t)) ; if nil, italics is universally disabled
-
-  (load-theme 'hhsaez t)
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one)) ; overrides default theme 
 #+END_SRC
 
 * VISUALS
