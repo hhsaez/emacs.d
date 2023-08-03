@@ -26,6 +26,8 @@
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
   - [[#disable-electric-indent][Disable Electric indent]]
+- [[#os-specific][OS SPECIFIC]]
+  - [[#macos][MacOS]]
 - [[#projectile][PROJECTILE]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
@@ -148,7 +150,7 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
     (setq dashboard-startup-banner (concat user-emacs-directory "le-voyage-dans-la-lune.jpg")) ;; use custom image
     (setq dashboard-image-banner-max-height 140)
     (setq dashboard-center-content t) ;; set to 't' for centered content
-    (setq dashboard-items '((recents . 5)
+    (setq dashboard-items '((recents . 10)
                             (agenda . 5)
                             (bookmarks . 3)
                             (projects . 3) ;; Requires "projectile"
@@ -249,7 +251,7 @@ Let's make GPU Emacs look a little better
 
 ** Disable Menubar, Toolbars and Scrollbars
 #+BEGIN_SRC emacs-lisp
-  (menu-bar-mode t)
+  (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
 #+END_SRC
@@ -346,13 +348,37 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
   (electric-indent-mode -1)
 #+END_SRC
 
+* OS SPECIFIC
+
+** MacOS
+
+#+BEGIN_SRC emacs-lisp
+  (when (equal system-type 'darwin)
+    ;; (setq mac-option-modifier 'super)
+    ;; (setq mac-command-modifier 'meta)
+    (setq ns-auto-hide-menu-bar t)
+    (setq ns-use-proxy-icon nil)
+    (setq dired-use-ls-dired nil)
+    (setq initial-frame-alist
+          (append
+           '((ns-transparent-titlebar . t)
+             (ns-appearance .dark)
+             (vertical-scroll-bar . nil)
+             (internal-border-width . 0)))))
+#+END_SRC
+
 * PROJECTILE
 Projectile is a project interaction library for Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
-               :config
-               (projectile-mode 1))
+    :diminish
+    :init
+    (setq projectile-keymap-prefix (kbd "C-c p"))
+    :config
+    (projectile-global-mode)
+    (setq projectile-enable-caching t)
+    (projectile-mode 1))
 #+END_SRC
 
 * SHELLS AND TERMINALS
