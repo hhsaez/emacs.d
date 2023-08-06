@@ -135,7 +135,7 @@ Company is a text completion framework for Emacs. The name stands for "complete 
     :diminish
     :custom
     (company-begin-commands '(self-insert-command))
-    (company-idle-delay .1)
+    (company-idle-delay .4)
     (company-minimum-prefix-length 2)
     (company-show-numbers t)
     (company-tooltip-align-annotations 't)
