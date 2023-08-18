@@ -29,6 +29,7 @@
   - [[#disable-electric-indent][Disable Electric indent]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
+  - [[#windows][Windows]]
 - [[#projectile][PROJECTILE]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
@@ -377,6 +378,13 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
              (ns-appearance .dark)
              (vertical-scroll-bar . nil)
              (internal-border-width . 0)))))
+#+END_SRC
+
+** Windows
+
+Set ssh_askpass to the proper executable
+#+BEGIN_SRC emacs-lisp
+(setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe") 
 #+END_SRC
 
 * PROJECTILE
