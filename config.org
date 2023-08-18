@@ -9,6 +9,7 @@
   - [[#elpaca-package-manager][Elpaca Package Manager]]
 - [[#all-the-icons][ALL THE ICONS]]
 - [[#backup-files][BACKUP FILES]]
+- [[#clang-format][CLANG-FORMAT]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
 - [[#diminish][DIMINISH]]
@@ -22,6 +23,7 @@
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
+- [[#modeline][MODELINE]]
 - [[#neotree][NEOTREE]]
 - [[#org-mode][ORG MODE]]
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
@@ -35,13 +37,15 @@
   - [[#eshell][Eshell]]
 - [[#reload-emacs][RELOAD EMACS]]
 - [[#themes][THEMES]]
+- [[#trim-whitespaces-before-saving][TRIM WHITESPACES BEFORE SAVING]]
 - [[#visuals][VISUALS]]
 - [[#which-key][WHICH-KEY]]
+- [[#future-work][FUTURE WORK]]
 
 * IMPORTANT PROGRAMS TO LOAD FIRST
 ** Elpaca Package Manager
 The following code was extract as-is from Elpaca README.md file
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp
     (defvar elpaca-installer-version 0.5)
     (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
     (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
@@ -110,7 +114,7 @@ The following code was extract as-is from Elpaca README.md file
 
 * ALL THE ICONS
  This is an icon set that can be used with dashboard, dired, ibuffer and other Emacs programs.
-  
+
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons
   :ensure t
@@ -122,9 +126,32 @@ The following code was extract as-is from Elpaca README.md file
 
 * BACKUP FILES
 
-Disable backup files by default
+By default, Emacs creates automatic backups of opened files in their original directories, leading to a lot of clutter. Let's disable backfiles files (an alternative could be to tell Emacs to store backups in a different directory...)
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil)
+#+END_SRC
+
+* CLANG-FORMAT
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clang-format
+    :ensure t
+    :config
+    (setq clang-format-style "file"))
+
+  (defun clang-format-buffer-smart ()
+    "Reformat buffer if .clang-format exists in the projectile root."
+    (when (f-exists? (expand-file-name ".clang-format" (projectile-project-root)))
+      (clang-format-buffer)))
+
+  (defun clang-format-buffer-smart-on-save ()
+    "Add auto-save hook for clang-format-buffer-smart."
+    (add-hook 'before-save-hook 'clang-format-buffer-smart nil t))
+
+  ;; Run this for each mode you want to use the hook.
+  (add-hook 'c-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
+  (add-hook 'c++-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
+  (add-hook 'glsl-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
 #+END_SRC
 
 * COMPANY
@@ -169,8 +196,8 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
                             (projects . 3) ;; Requires "projectile"
                             (registers .. 3)))
     :config
-    (dashboard-modify-heading-icons '((recents . "file-text")
-                                      (bookmarks . "book")))
+;;    (dashboard-modify-heading-icons '((recents . "file-text")
+  ;;                                    (bookmarks . "book")))
     (dashboard-setup-startup-hook))
 #+END_SRC
 
@@ -311,11 +338,31 @@ Let's make GPU Emacs look a little better
                             ivy-rich-path-style 'abbrev))
 #+END_SRC
 
+* MODELINE
+
+The modeline is the bottom status bar that appears in Emacs windows.
+
+Doom Emacs already has a nice modeline package available, saving us some work.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :config
+    (setq doom-modeline-height 40
+          ;; sets left bar width
+          doom-modeline-bar-width 5
+          ;; adds perspective name to modelinep
+          doom-modeline-persp-name t
+          ;; adds folder icon next to persp mode
+          doom-modeline-persp-icon t))
+#+END_SRC
+
 * NEOTREE
 
-Neotree is a file tree viewer. 
+Neotree is a file tree viewer.
 
-NeoTree provides folliwng themes: classic, ascii, arrow, icons and nerd. Theme can be configured by setting "two" themes for neo-theme: one for the GUI and one for the terminal. 
+NeoTree provides folliwng themes: classic, ascii, arrow, icons and nerd. Theme can be configured by setting "two" themes for neo-theme: one for the GUI and one for the terminal.
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
@@ -369,7 +416,7 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
   (when (equal system-type 'darwin)
     ;; (setq mac-option-modifier 'super)
     ;; (setq mac-command-modifier 'meta)
-    (setq ns-auto-hide-menu-bar t)
+    (setq ns-auto-hide-menu-bar nil)
     (setq ns-use-proxy-icon nil)
     (setq dired-use-ls-dired nil)
     (setq initial-frame-alist
@@ -384,7 +431,7 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
 
 Set ssh_askpass to the proper executable
 #+BEGIN_SRC emacs-lisp
-(setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe") 
+(setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe")
 #+END_SRC
 
 * PROJECTILE
@@ -415,7 +462,7 @@ Eshell is an Emacs 'shell' that is written in Elisp.
 ;; eshell-syntax-highlighting -- adds fish/zsh-like syntax highlighting.
 ;; eshell-rc-script -- your profile for eshell; like a bashrc for eshell.
 ;; eshell-aliases-file -- sets an aliases file for the eshell.
-  
+
 (setq eshell-rc-script (concat user-emacs-directory "eshell/profile")
       eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
       eshell-history-size 5000
@@ -438,7 +485,7 @@ Use this function to reload Emacs after adding changes to the config.
 
 * THEMES
 
-Designates the directory where will place all of our themes. 
+Designates the directory where will place all of our themes.
 Now, select our chosen theme, which is *hhsaez* by default, a theme that I created with the help of Emacs Theme Editor.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
@@ -452,7 +499,18 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
     :config
     (setq doom-themes-enable-bold t ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-one t)) ; overrides default theme 
+    ;; overrides default theme
+    (load-theme 'doom-one t)
+    ;; Enable custom neotree theme (all-the-icons must be installed)
+    (doom-themes-neotree-config)
+    ;; Corrects and improves org-mode's native fontification
+    (doom-themes-org-config))
+#+END_SRC
+
+* TRIM WHITESPACES BEFORE SAVING
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
 * VISUALS
@@ -485,3 +543,8 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
             which-key-separator " → " ))
 #+END_SRC
 
+* FUTURE WORK
+
+- [ ] Move things like Elpaca config to their own files.
+- [ ] Fix MacOS tiling issues.
+- [ ] Fix Windows eshell and git issues.
