@@ -9,6 +9,7 @@
   - [[#elpaca-package-manager][Elpaca Package Manager]]
 - [[#all-the-icons][ALL THE ICONS]]
 - [[#backup-files][BACKUP FILES]]
+- [[#cc-programming][C/C++ PROGRAMMING]]
 - [[#clang-format][CLANG-FORMAT]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
@@ -129,6 +130,39 @@ The following code was extract as-is from Elpaca README.md file
 By default, Emacs creates automatic backups of opened files in their original directories, leading to a lot of clutter. Let's disable backfiles files (an alternative could be to tell Emacs to store backups in a different directory...)
 #+BEGIN_SRC emacs-lisp
 (setq make-backup-files nil)
+#+END_SRC
+
+* C/C++ PROGRAMMING
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default c-basic-offset 4
+                tab-width 4
+                indent-tabs-mode nil)
+
+  (defun my-c-mode-common-hook ()
+    (progn
+      (c-add-style "mine" '("stroustrup"
+                            (c-offsets-alist
+                             (substatement-open . 0)
+                             (statement-cont . 0)
+                             (innamespace . +)
+                             (inline-open . 0)
+                             (inlambda . 0)
+                             (inher-cont . c-lineup-multi-inher)
+                             (arglist-intro . +)
+                             (arglist-cont-nonempty . 0)
+                             (arglist-close . 0)
+                             (case-label . +)
+                             (template-args-cont . 0))))
+      (setq c-default-style "mine")
+      (c-set-style "mine")))
+    (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+#+END_SRC
+
+Ensure that compilation buffer scrolls to the bottom
+
+#+BEGIN_SRC emacs-lisp
+(setq compilation-scroll-output t)
 #+END_SRC
 
 * CLANG-FORMAT
@@ -306,36 +340,43 @@ Let's make GPU Emacs look a little better
 + Ivy, a generic completion mechanism for Emacs.
 + Counsel, a collection of Ivy-enhanced versions of common Emacs commands.
 + Ivy-rich allows us to add descriptions alongside the commands in M-x.
++ Ivy-Prescient is a simple and effective sorting and filtering tool for Emacs.
 
 #+BEGIN_SRC emacs-lisp
-   (use-package counsel
-     :after ivy
-     :config (counsel-mode))
+     (use-package counsel
+       :after ivy
+       :config (counsel-mode))
 
-  (use-package ivy
-    :bind
-    ;; ivy-resume resumes the last Ivy-based completion.
-    (("C-c C-r" . ivy-resume)
-     ("C-x B" . ivy-switch-buffer-other-window))
-    :custom
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (setq enable-recursive-minibuffers t)
-    :config
-    (ivy-mode))
+    (use-package ivy
+      :bind
+      ;; ivy-resume resumes the last Ivy-based completion.
+      (("C-c C-r" . ivy-resume)
+       ("C-x B" . ivy-switch-buffer-other-window))
+      :custom
+      (setq ivy-use-virtual-buffers t)
+      (setq ivy-count-format "(%d/%d) ")
+      (setq enable-recursive-minibuffers t)
+      :config
+      (ivy-mode))
 
-  (use-package all-the-icons-ivy-rich
-    :ensure t
-    :init (all-the-icons-ivy-rich-mode 1))
+    (use-package all-the-icons-ivy-rich
+      :ensure t
+      :init (all-the-icons-ivy-rich-mode 1))
 
-  (use-package ivy-rich
+    (use-package ivy-rich
+      :after ivy
+      :ensure t
+      :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+      :custom
+      (ivy-virtual-abbreviate 'full
+                              ivy-rich-switch-buffer-align-virtual-buffer t
+                              ivy-rich-path-style 'abbrev))
+
+  (use-package ivy-prescient
     :after ivy
     :ensure t
-    :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
-    :custom
-    (ivy-virtual-abbreviate 'full
-                            ivy-rich-switch-buffer-align-virtual-buffer t
-                            ivy-rich-path-style 'abbrev))
+    :init (ivy-prescient-mode 1)
+    )
 #+END_SRC
 
 * MODELINE
