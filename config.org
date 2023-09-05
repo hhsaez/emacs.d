@@ -24,6 +24,7 @@
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
+- [[#minibuffer-escape][MINIBUFFER ESCAPE]]
 - [[#modeline][MODELINE]]
 - [[#neotree][NEOTREE]]
 - [[#org-mode][ORG MODE]]
@@ -33,6 +34,7 @@
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
+- [[#perspective][PERSPECTIVE]]
 - [[#projectile][PROJECTILE]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
@@ -379,6 +381,16 @@ Let's make GPU Emacs look a little better
     )
 #+END_SRC
 
+* MINIBUFFER ESCAPE
+
+By default, Emacs requries you to hit ESC three times to quit the minibuffer.
+
+This change will modify that mechanism to require ONLY ONE ESC key press.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [escape] 'keyboard-escape-quit)
+#+END_SRC
+
 * MODELINE
 
 The modeline is the bottom status bar that appears in Emacs windows.
@@ -474,6 +486,10 @@ Set ssh_askpass to the proper executable
 #+BEGIN_SRC emacs-lisp
 (setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe")
 #+END_SRC
+
+* PERSPECTIVE
+
+TODO
 
 * PROJECTILE
 Projectile is a project interaction library for Emacs.
