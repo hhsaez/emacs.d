@@ -13,6 +13,7 @@
 - [[#clang-format][CLANG-FORMAT]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
+- [[#dimmer][DIMMER]]
 - [[#diminish][DIMINISH]]
 - [[#dired][DIRED]]
 - [[#flycheck][FLYCHECK]]
@@ -235,6 +236,19 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
 ;;    (dashboard-modify-heading-icons '((recents . "file-text")
   ;;                                    (bookmarks . "book")))
     (dashboard-setup-startup-hook))
+#+END_SRC
+
+* DIMMER
+Indicates which buffer is currently active by dimming the faces in the other buffers.
+#+BEGIN_SRC emacs-lisp
+  (use-package dimmer
+    :ensure t
+    :init (dimmer-mode t)
+    :config
+    (setq dimmer-watch-frame-focus-event nil)
+    (setq dimmer-fraction 0.5)
+    (dimmer-configure-which-key)
+    (dimmer-configure-helm))
 #+END_SRC
 
 * DIMINISH
