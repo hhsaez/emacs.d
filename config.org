@@ -11,6 +11,7 @@
 - [[#backup-files][BACKUP FILES]]
 - [[#cc-programming][C/C++ PROGRAMMING]]
 - [[#clang-format][CLANG-FORMAT]]
+- [[#cmake][CMAKE]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
 - [[#dimmer][DIMMER]]
@@ -189,6 +190,15 @@ Ensure that compilation buffer scrolls to the bottom
   (add-hook 'c-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
   (add-hook 'c++-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
   (add-hook 'glsl-mode-hook (lambda () (clang-format-buffer-smart-on-save)))
+#+END_SRC
+
+* CMAKE
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-load-file
+ (expand-file-name
+  "cmake-utils.org"
+  user-emacs-directory))
 #+END_SRC
 
 * COMPANY

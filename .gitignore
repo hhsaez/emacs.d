@@ -1,5 +1,6 @@
 auto-save-list
 config.el
+cmake-utils.el
 *.*~
 elpaca/
 eshell

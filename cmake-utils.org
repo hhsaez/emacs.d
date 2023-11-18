@@ -1,0 +1,113 @@
+#+TITLE: Hernan's CMake Utils for Emacs
+#+AUTHOR: Hernan Saez (hhsaez)
+#+DESCRIPTION: Provides utilities for configuring, building and testing CMake projects
+#+STARTUP: showeverything
+#+OPTIONS: toc:4
+
+* TABLE OF CONTENTS :toc:
+- [[#project-directory][PROJECT DIRECTORY]]
+- [[#paths][PATHS]]
+- [[#reset][RESET]]
+- [[#configure][CONFIGURE]]
+- [[#build][BUILD]]
+- [[#test][TEST]]
+
+* PROJECT DIRECTORY
+
+#+BEGIN_SRC emacs-lisp
+  (defvar cmake-project-dir nil
+    "CMake project directory.")
+
+  (defun cmake-set-project-dir (project-dir)
+    "Set CMake project directory."
+    (interactive (list (read-directory-name "Project Directory: ")))
+    (setq cmake-project-dir project-dir))
+
+  (defun cmake-validate-project-dir ()
+    "Check if there is a valid project directory set."
+    (unless cmake-project-dir
+      (error "Project directory was not set")))
+#+END_SRC
+
+* PATHS
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-project-source-path ()
+    "Return the source directory for current cmake project."
+    (cmake-validate-project-dir)
+    cmake-project-dir)
+
+  (defun cmake-project-build-path ()
+    "Return the build directory for current cmake project."
+    (cmake-validate-project-dir)
+    (concat cmake-project-dir "build"))
+#+END_SRC
+
+* RESET
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-reset-project-dir ()
+    "Reset project directory."
+    (interactive)
+    (setq cmake-project-dir nil))
+
+#+END_SRC
+
+* CONFIGURE
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-project-configure-command ()
+    "Return the compilation command for building a project."
+    (concat "cmake -S " (cmake-project-source-path) " -B " (cmake-project-build-path)))
+
+  (defun cmake-configure ()
+    "Configure CMake project."
+    (interactive)
+    (cmake-validate-project-dir)
+    (setq compile-command (cmake-project-configure-command))
+    (call-interactively 'compile))
+#+END_SRC
+
+* BUILD
+
+#+BEGIN_SRC emacs-lisp
+  (defvar cmake-build-target nil
+    "CMake current build target.")
+
+  (defun cmake-set-build-target (build-target)
+    "Set CMake current build target."
+    (interactive "MBuild Target: ")
+    (setq cmake-build-target build-target))
+
+  (defun cmake-project-build-command ()
+    "Return the compilation command for building a project."
+    (if cmake-build-target
+        (concat "cmake --build " (cmake-project-build-path) " --target " cmake-build-target)
+    (concat "cmake --build " (cmake-project-build-path))))
+
+  (defun cmake-build ()
+    "Build CMake project."
+    (interactive)
+    (cmake-validate-project-dir)
+    (setq compile-command (cmake-project-build-command))
+    (call-interactively 'compile))
+
+#+END_SRC
+
+* TEST
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-project-test-command ()
+    "Return the CTest command for testing the project."
+    (concat "ctest --test-dir " (cmake-project-build-path)))
+
+  (defun cmake-test ()
+    "Test CMake project."
+    (interactive)
+    (cmake-validate-project-dir)
+    (setq compile-command (cmake-project-test-command))
+    (call-interactively 'compile))
+  ;;(provide 'cmake-utils)
+
+  ;;; cmake-utils.el ends here
+#+END_SRC
