@@ -169,6 +169,12 @@ Ensure that compilation buffer scrolls to the bottom
 (setq compilation-scroll-output t)
 #+END_SRC
 
+Jump between compilation errors, ignoring warnings
+
+#+BEGIN_SRC emacs-lisp
+(setq compilation-skip-threshold 2)
+#+END_SRC
+
 * CLANG-FORMAT
 
 #+BEGIN_SRC emacs-lisp

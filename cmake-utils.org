@@ -91,7 +91,6 @@
     (cmake-validate-project-dir)
     (setq compile-command (cmake-project-build-command))
     (call-interactively 'compile))
-
 #+END_SRC
 
 * TEST
