@@ -33,6 +33,7 @@
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#enabling-org-bullets][Enabling Org Bullets]]
   - [[#disable-electric-indent][Disable Electric indent]]
+  - [[#allow-inline-images-to-be-resized][Allow inline images to be resized]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -495,6 +496,12 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
 
 #+BEGIN_SRC emacs-lisp
   (electric-indent-mode -1)
+#+END_SRC
+
+** Allow inline images to be resized
+If set to nil, org will try to get the width from an #+ATTR* keyword and fall back to the original image width if none is found
+#+BEGIN_SRC emacs-lisp
+(setq org-image-actual-width nil)
 #+END_SRC
 
 * OS SPECIFIC
