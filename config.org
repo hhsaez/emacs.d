@@ -242,8 +242,8 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
     (setq dashboard-set-file-icons t)
     (setq dashboard-banner-logo-title "Fly Me To The Moon!")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    (setq dashboard-startup-banner (concat user-emacs-directory "le-voyage-dans-la-lune.png")) ;; use custom image
-    (setq dashboard-image-banner-max-height 140)
+    (setq dashboard-startup-banner (concat user-emacs-directory "wallpaper.png")) ;; use custom image
+    (setq dashboard-image-banner-max-height 280)
     (setq dashboard-center-content t) ;; set to 't' for centered content
     (setq dashboard-items '((recents . 10)
                             (agenda . 5)
