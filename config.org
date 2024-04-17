@@ -27,6 +27,7 @@
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
+- [[#markdown-mode][MARKDOWN MODE]]
 - [[#modeline][MODELINE]]
 - [[#neotree][NEOTREE]]
 - [[#org-mode][ORG MODE]]
@@ -382,7 +383,7 @@ Let's make GPU Emacs look a little better
 ** Display Line Numbers and Truncated Lines
 #+BEGIN_SRC emacs-lisp
   (global-display-line-numbers-mode 1)
-  (global-visual-line-mode t)
+  (setq-default truncate-lines nil)
 #+END_SRC
 
 * IVY (COUNSEL)
@@ -426,6 +427,12 @@ Let's make GPU Emacs look a little better
     :ensure t
     :init (ivy-prescient-mode 1)
     )
+#+END_SRC
+
+* MARKDOWN MODE
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t)
 #+END_SRC
 
 * MODELINE
