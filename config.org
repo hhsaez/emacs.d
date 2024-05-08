@@ -429,6 +429,13 @@ Let's make GPU Emacs look a little better
     )
 #+END_SRC
 
+
+When entering a string which is not on the list of candidates but matches a substring of one of them, Ivy prevents us from selecting our prompt, forcing us to use the suggested one.
+By enabling this setting, we can press the up arrow (or C-p) when on the first candidate to select the contents of the prompt line.
+#+BEGIN_SRC emacs-lisp
+  (setq-default ivy-use-selectable-prompt t)
+#+END_SRC
+
 * MARKDOWN MODE
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
