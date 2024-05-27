@@ -98,7 +98,7 @@
 #+BEGIN_SRC emacs-lisp
   (defun cmake-project-test-command ()
     "Return the CTest command for testing the project."
-    (concat "ctest --test-dir " (cmake-project-build-path)))
+    (concat "ctest --test-dir " (cmake-project-build-path) " --stop-on-failure --output-on-failure"))
 
   (defun cmake-test ()
     "Test CMake project."
