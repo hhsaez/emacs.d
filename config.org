@@ -8,6 +8,7 @@
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
 - [[#all-the-icons][ALL THE ICONS]]
+- [[#automatically-revert-buffers-for-changed-files][AUTOMATICALLY REVERT BUFFERS FOR CHANGED FILES]]
 - [[#backup-files][BACKUP FILES]]
 - [[#cc-programming][C/C++ PROGRAMMING]]
 - [[#clang-format][CLANG-FORMAT]]
@@ -40,6 +41,7 @@
   - [[#windows][Windows]]
 - [[#perspective][PERSPECTIVE]]
 - [[#projectile][PROJECTILE]]
+- [[#remembering-the-last-place-you-visited-in-a-file][REMEMBERING THE LAST PLACE YOU VISITED IN A FILE]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
 - [[#reload-emacs][RELOAD EMACS]]
@@ -129,6 +131,16 @@ The following code was extract as-is from Elpaca README.md file
 
 (use-package all-the-icons-dired
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+END_SRC
+
+* AUTOMATICALLY REVERT BUFFERS FOR CHANGED FILES
+
+Revert buffers when the underlying file has changed.
+
+#+BEGIN_SRC emacs-lisp
+
+(global-auto-revert-mode 1)
+
 #+END_SRC
 
 * BACKUP FILES
@@ -560,6 +572,16 @@ Projectile is a project interaction library for Emacs.
     (projectile-global-mode)
     (setq projectile-enable-caching t)
     (projectile-mode 1))
+#+END_SRC
+
+* REMEMBERING THE LAST PLACE YOU VISITED IN A FILE
+
+Remember and restore the last cursor location of opened files
+
+#+BEGIN_SRC emacs-lisp
+
+(save-place-mode 1)
+
 #+END_SRC
 
 * SHELLS AND TERMINALS
