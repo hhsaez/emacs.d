@@ -15,7 +15,6 @@
 - [[#cmake][CMAKE]]
 - [[#company][COMPANY]]
 - [[#dashboard][DASHBOARD]]
-- [[#dimmer][DIMMER]]
 - [[#diminish][DIMINISH]]
 - [[#dired][DIRED]]
 - [[#fixing-esc-key][FIXING ESC KEY]]
@@ -27,6 +26,7 @@
   - [[#starting-frame-size][Starting frame size]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+- [[#golden-ratio][GOLDEN RATIO]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
 - [[#markdown-mode][MARKDOWN MODE]]
 - [[#modeline][MODELINE]]
@@ -44,6 +44,7 @@
 - [[#remembering-the-last-place-you-visited-in-a-file][REMEMBERING THE LAST PLACE YOU VISITED IN A FILE]]
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
+- [[#solair][SOLAIR]]
 - [[#reload-emacs][RELOAD EMACS]]
 - [[#themes][THEMES]]
 - [[#trim-whitespaces-before-saving][TRIM WHITESPACES BEFORE SAVING]]
@@ -268,19 +269,6 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
     (dashboard-setup-startup-hook))
 #+END_SRC
 
-* DIMMER
-Indicates which buffer is currently active by dimming the faces in the other buffers.
-#+BEGIN_SRC emacs-lisp
-  (use-package dimmer
-    :ensure t
-    :init (dimmer-mode t)
-    :config
-    (setq dimmer-watch-frame-focus-event nil)
-    (setq dimmer-fraction 0.5)
-    (dimmer-configure-which-key)
-    (dimmer-configure-helm))
-#+END_SRC
-
 * DIMINISH
 This package implements hiding or abbreviation of the modeline displays (lighters) of minor-mode. With this package installed, you can add ':diminish' to any use-package block to hide that particular mode in the modeline.
 
@@ -396,6 +384,19 @@ Let's make GPU Emacs look a little better
 #+BEGIN_SRC emacs-lisp
   (global-display-line-numbers-mode 1)
   (setq-default truncate-lines nil)
+#+END_SRC
+
+* GOLDEN RATIO
+
+Use `golden-ratio-toggle-widescreen` if splits are too wide
+
+Note: Seems this package is no longer actively maintained...
+
+#+BEGIN_SRC emacs-lisp
+  (use-package golden-ratio
+    :ensure t
+    :custom
+    (golden-ratio-mode 1))
 #+END_SRC
 
 * IVY (COUNSEL)
@@ -608,6 +609,15 @@ Eshell is an Emacs 'shell' that is written in Elisp.
       eshell-destroy-buffer-when-process-dies t
       eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
 #+end_src
+
+* SOLAIR
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solaire-mode
+    :ensure t
+    :custom
+    (solaire-global-mode 1))
+#+END_SRC
 
 * RELOAD EMACS
 Use this function to reload Emacs after adding changes to the config.
