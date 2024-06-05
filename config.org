@@ -4,6 +4,10 @@
 #+STARTUP: showeverything
 #+OPTIONS: toc:4
 
+My Emacs configuration file, as a ORG file so I can explain things around.
+
+Please note that this is organized based on what works for me.
+
 * TABLE OF CONTENTS :toc:
 - [[#important-programs-to-load-first][IMPORTANT PROGRAMS TO LOAD FIRST]]
   - [[#elpaca-package-manager][Elpaca Package Manager]]
@@ -25,7 +29,9 @@
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#starting-frame-size][Starting frame size]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
-  - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+  - [[#display-line-numbers][Display Line Numbers]]
+  - [[#wrap-text-only-on-text-files][Wrap text only on text files]]
+  - [[#disable-truncate-lines-in-prog-mode][Disable truncate lines in prog mode]]
 - [[#golden-ratio][GOLDEN RATIO]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
 - [[#markdown-mode][MARKDOWN MODE]]
@@ -45,6 +51,7 @@
 - [[#shells-and-terminals][SHELLS AND TERMINALS]]
   - [[#eshell][Eshell]]
 - [[#solair][SOLAIR]]
+- [[#spacious-padding][SPACIOUS PADDING]]
 - [[#reload-emacs][RELOAD EMACS]]
 - [[#themes][THEMES]]
 - [[#trim-whitespaces-before-saving][TRIM WHITESPACES BEFORE SAVING]]
@@ -369,8 +376,8 @@ Let's make GPU Emacs look a little better
 
 ** Starting frame size
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(height . 50))
-(add-to-list 'default-frame-alist '(width . 120))
+(add-to-list 'default-frame-alist '(height . 100))
+(add-to-list 'default-frame-alist '(width . 240))
 #+END_SRC
 
 ** Disable Menubar, Toolbars and Scrollbars
@@ -380,13 +387,29 @@ Let's make GPU Emacs look a little better
   (scroll-bar-mode -1)
 #+END_SRC
 
-** Display Line Numbers and Truncated Lines
+** Display Line Numbers
+Don't use global line numbers mode (global-display-line-numbers-mode) since that will turn on line numbers for all buffers, not just text files.
+
+Instead, enable line numbers only when editing text files and in all programming modes
+
 #+BEGIN_SRC emacs-lisp
-  (global-display-line-numbers-mode 1)
-  (setq-default truncate-lines nil)
+(add-hook 'text-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+#+END_SRC
+
+** Wrap text only on text files
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'visual-line-mode)
+#+END_SRC
+
+** Disable truncate lines in prog mode
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook
+            (lambda () (setq truncate-lines -1)))
 #+END_SRC
 
 * GOLDEN RATIO
+https://github.com/roman/golden-ratio.el
 
 Use `golden-ratio-toggle-widescreen` if splits are too wide
 
@@ -395,8 +418,11 @@ Note: Seems this package is no longer actively maintained...
 #+BEGIN_SRC emacs-lisp
   (use-package golden-ratio
     :ensure t
+    :init
+    (golden-ratio-mode)
     :custom
-    (golden-ratio-mode 1))
+    (golden-ratio-auto-scale 1)
+    (golden-ratio-exclude-modes '(neotree-mode)))
 #+END_SRC
 
 * IVY (COUNSEL)
@@ -485,6 +511,7 @@ NeoTree provides folliwng themes: classic, ascii, arrow, icons and nerd. Theme c
   (use-package neotree
     :config
     (setq neo-smart-open t ; allows jumping to the current file
+          neo-autorefresh t
           neo-show-hidden-files t
           neo-window-width 55
           neo-window-fixed-size nil ; makes width to be adjustable
@@ -617,6 +644,17 @@ Eshell is an Emacs 'shell' that is written in Elisp.
     :ensure t
     :custom
     (solaire-global-mode 1))
+#+END_SRC
+
+
+* SPACIOUS PADDING
+Adds padding around windows and frames
+
+#+BEGIN_SRC emacs-lisp
+  (use-package spacious-padding
+    :ensure t
+    :init
+    (spacious-padding-mode 1))
 #+END_SRC
 
 * RELOAD EMACS
