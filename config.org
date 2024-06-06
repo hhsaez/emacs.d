@@ -28,6 +28,7 @@ Please note that this is organized based on what works for me.
   - [[#zooming-inout][Zooming In/Out]]
 - [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
   - [[#starting-frame-size][Starting frame size]]
+  - [[#starting-frame-position][Starting frame position]]
   - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
   - [[#display-line-numbers][Display Line Numbers]]
   - [[#wrap-text-only-on-text-files][Wrap text only on text files]]
@@ -379,6 +380,13 @@ Let's make GPU Emacs look a little better
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(height . 80))
 (add-to-list 'default-frame-alist '(width . 240))
+#+END_SRC
+
+** Starting frame position
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(user-position . t))
+(add-to-list 'default-frame-alist '(top . 0.5))
+(add-to-list 'default-frame-alist '(left . 0.5))
 #+END_SRC
 
 ** Disable Menubar, Toolbars and Scrollbars
