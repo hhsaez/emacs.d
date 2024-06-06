@@ -42,6 +42,7 @@ Please note that this is organized based on what works for me.
   - [[#enabling-org-bullets][Enabling Org Bullets]]
   - [[#disable-electric-indent][Disable Electric indent]]
   - [[#allow-inline-images-to-be-resized][Allow inline images to be resized]]
+  - [[#org-download][ORG Download]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -556,6 +557,17 @@ by electric-indent-mode turned on by default in Emacs. Let's turn it off.
 If set to nil, org will try to get the width from an #+ATTR* keyword and fall back to the original image width if none is found
 #+BEGIN_SRC emacs-lisp
 (setq org-image-actual-width nil)
+#+END_SRC
+
+** ORG Download
+#+BEGIN_SRC emacs-lisp
+  (use-package org-download
+    :ensure t
+    :init
+    (setq org-download-method 'directory)
+    (setq org-download-image-dir "./images")
+    :config
+    (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
 * OS SPECIFIC
