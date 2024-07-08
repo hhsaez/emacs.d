@@ -44,6 +44,7 @@ Please note that this is organized based on what works for me.
   - [[#disable-electric-indent][Disable Electric indent]]
   - [[#allow-inline-images-to-be-resized][Allow inline images to be resized]]
   - [[#org-download][ORG Download]]
+- [[#org-roam][ORG-ROAM]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -60,6 +61,7 @@ Please note that this is organized based on what works for me.
 - [[#visuals][VISUALS]]
 - [[#which-key][WHICH-KEY]]
 - [[#future-work][FUTURE WORK]]
+- [[#references][REFERENCES]]
 
 * IMPORTANT PROGRAMS TO LOAD FIRST
 ** Elpaca Package Manager
@@ -578,6 +580,25 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
     (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
+* ORG-ROAM
+
+**IMPORTANT:** Ensure the org-roam directory exists **BEFORE** using org-roam.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :init
+    ;; Ignore v1 migration warning
+    (setq org-roam-v2-ack t)
+    ;;:custom
+    ;;(org-roam-directory (file-truename "~/RoamNotes"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert))
+    :config
+    (org-roam-setup))
+#+END_SRC
+
 * OS SPECIFIC
 
 ** MacOS
@@ -599,9 +620,12 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
 
 ** Windows
 
-Set ssh_askpass to the proper executable
 #+BEGIN_SRC emacs-lisp
-(setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe")
+  (when (equal system-type 'windows)
+    ;; Configure org-mode directory
+    (org-roam-directory (file-truename "C:/org-mode"))
+    ;; Set ssh_askpass to the proper executable
+    (setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe"))
 #+END_SRC
 
 * PERSPECTIVE
@@ -752,3 +776,6 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
 - [ ] Move things like Elpaca config to their own files.
 - [ ] Fix MacOS tiling issues.
 - [ ] Fix Windows eshell and git issues.
+
+* REFERENCES
+- [[https://youtu.be/AyhPmypHDEw?si=sySufrf72E2dXoQ4][Getting Started with ORG-ROAM - Build a Second Brain in Emacs]]
