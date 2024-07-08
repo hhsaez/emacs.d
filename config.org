@@ -591,7 +591,7 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
     ;; Ignore v1 migration warning
     (setq org-roam-v2-ack t)
     :custom
-    ;;(org-roam-directory (file-truename "~/RoamNotes"))
+    (org-roam-directory (file-truename "~/.org-roam"))
     ;; Customize default node style to include creation date
     (org-roam-capture-templates
      '(("d" "default" plain
@@ -628,8 +628,6 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
 
 #+BEGIN_SRC emacs-lisp
   (when (equal system-type 'windows)
-    ;; Configure org-mode directory
-    (org-roam-directory (file-truename "C:/org-mode"))
     ;; Set ssh_askpass to the proper executable
     (setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe"))
 #+END_SRC
