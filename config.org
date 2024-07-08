@@ -627,7 +627,7 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
 ** Windows
 
 #+BEGIN_SRC emacs-lisp
-  (when (equal system-type 'windows)
+  (when (equal system-type 'windows-nt)
     ;; Set ssh_askpass to the proper executable
     (setenv "SSH_ASKPASS" "c:/Program Files/Git/mingw64/libexec/git-core/git-askpass.exe"))
 #+END_SRC
