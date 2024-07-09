@@ -271,8 +271,8 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
     (setq dashboard-center-content t) ;; set to 't' for centered content
     (setq dashboard-items '((recents . 10)
                             (agenda . 5)
-                            (bookmarks . 3)
-                            (projects . 3) ;; Requires "projectile"
+                            (bookmarks . 10)
+                            (projects . 10) ;; Requires "projectile"
                             (registers .. 3)))
     :config
     ;;    (dashboard-modify-heading-icons '((recents . "file-text")
