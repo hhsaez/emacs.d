@@ -705,7 +705,6 @@ Eshell is an Emacs 'shell' that is written in Elisp.
     (solaire-global-mode 1))
 #+END_SRC
 
-
 * SPACIOUS PADDING
 Adds padding around windows and frames
 
