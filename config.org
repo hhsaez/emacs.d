@@ -45,7 +45,9 @@ Please note that this is organized based on what works for me.
   - [[#enable-inline-images-by-default][Enable inline images by default]]
   - [[#allow-inline-images-to-be-resized][Allow inline images to be resized]]
   - [[#org-download][ORG Download]]
+  - [[#org-habits][ORG-HABITS]]
 - [[#org-roam][ORG-ROAM]]
+  - [[#org-roam-dailies][ORG-ROAM-DAILIES]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -270,8 +272,9 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
     (setq dashboard-startup-banner (concat user-emacs-directory "wallpaper.png")) ;; use custom image
     (setq dashboard-image-banner-max-height 480)
     (setq dashboard-center-content t) ;; set to 't' for centered content
-    (setq dashboard-items '((recents . 10)
-                            (agenda . 5)
+    (setq dashboard-items '(
+                            (agenda . 20)
+                            (recents . 10)
                             (bookmarks . 10)
                             (projects . 10) ;; Requires "projectile"
                             (registers .. 3)))
@@ -586,6 +589,11 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
     (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
+** ORG-HABITS
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-modules 'org-habit t)
+#+END_SRC
+
 * ORG-ROAM
 
 **IMPORTANT:** Ensure the org-roam directory exists **BEFORE** using org-roam.
@@ -614,6 +622,15 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
     :config
     (require 'org-roam-dailies)
     (org-roam-setup))
+#+END_SRC
+
+** ORG-ROAM-DAILIES
+
+#+BEGIN_SRC emacs-lisp
+(setq org-roam-dailies-capture-templates
+'(("d" "default" entry "* %<%r>%?"
+:target
+(file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d %A | week %W | day %j>\n"))))
 #+END_SRC
 
 * OS SPECIFIC
