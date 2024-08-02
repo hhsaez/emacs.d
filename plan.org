@@ -1,0 +1,13 @@
+#+AUTHOR: H. Hernan Saez
+#+TITLE: Emacs Customization Plane
+
+* TODO Avoid user settings to be saved to init.el
+Right now, init.el will be updated whenever we change our local settings (like adding a new file org-agenda). It would be great to move these settings into a separated file so we can git-ignore them
+* TODO org-modern
+[[https://github.com/minad/org-modern][Github]]
+* TODO olivetti-mode
+[[https://github.com/rnkn/olivetti][Github]]
+* TODO org-super-agenda
+[[https://github.com/alphapapa/org-super-agenda][Github]]
+* TODO org-mode setup
+[[https://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life in Plain Text!]]
