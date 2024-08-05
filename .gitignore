@@ -13,3 +13,7 @@ org-persist/
 projects
 eln-cache
 places
+custom.el
+#bookmarks#
+.org-id-locations
+org-roam.db
