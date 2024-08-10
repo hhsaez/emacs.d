@@ -44,10 +44,12 @@ Please note that this is organized based on what works for me.
   - [[#disable-electric-indent][Disable Electric indent]]
   - [[#enable-inline-images-by-default][Enable inline images by default]]
   - [[#allow-inline-images-to-be-resized][Allow inline images to be resized]]
-  - [[#org-download][ORG Download]]
+  - [[#org_download][ORG_DOWNLOAD]]
   - [[#org-habits][ORG-HABITS]]
-- [[#org-roam][ORG-ROAM]]
-  - [[#org-roam-dailies][ORG-ROAM-DAILIES]]
+  - [[#org-roam][ORG-ROAM]]
+  - [[#org-todo][ORG-TODO]]
+  - [[#org-capture][ORG-CAPTURE]]
+  - [[#org-agenda][ORG-AGENDA]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -63,6 +65,7 @@ Please note that this is organized based on what works for me.
 - [[#trim-whitespaces-before-saving][TRIM WHITESPACES BEFORE SAVING]]
 - [[#visuals][VISUALS]]
 - [[#which-key][WHICH-KEY]]
+- [[#key-bindings][KEY BINDINGS]]
 - [[#future-work][FUTURE WORK]]
 - [[#references][REFERENCES]]
 
@@ -543,6 +546,12 @@ NeoTree provides folliwng themes: classic, ascii, arrow, icons and nerd. Theme c
 #+END_SRC
 
 * ORG MODE
+
+Ensure this directory exists and that it points to the expected location. See README.md file for more details about how to configure this directory on each platform
+#+BEGIN_SRC emacs-lisp
+  (setq org-directory "~/.org")
+#+END_SRC
+
 ** Enabling Table of Contents
 #+BEGIN_SRC emacs-lisp
   (use-package toc-org
@@ -578,7 +587,7 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
 (setq org-image-actual-width nil)
 #+END_SRC
 
-** ORG Download
+** ORG_DOWNLOAD
 #+BEGIN_SRC emacs-lisp
   (use-package org-download
     :ensure t
@@ -594,10 +603,9 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
   (add-to-list 'org-modules 'org-habit t)
 #+END_SRC
 
-* ORG-ROAM
+** ORG-ROAM
 
 **IMPORTANT:** Ensure the org-roam directory exists **BEFORE** using org-roam.
-
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
     :ensure t
@@ -624,13 +632,60 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
     (org-roam-setup))
 #+END_SRC
 
-** ORG-ROAM-DAILIES
+If the =org-roam-directory= variable is still not set immediately upon startup (even after forcing =org-roam-setup= above), we use a default value
+#+BEGIN_SRC emacs-lisp
+  (unless (bound-and-true-p org-roam-directory)
+    (setq org-roam-directory (file-truename "~/.org-roam")))
+#+END_SRC
+
+*** ORG-ROAM-DAILIES
 
 #+BEGIN_SRC emacs-lisp
-(setq org-roam-dailies-capture-templates
-'(("d" "default" entry "* %<%r>%?"
-:target
-(file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d %A | week %W | day %j>\n"))))
+  (setq org-roam-dailies-capture-templates
+  '(("d" "default" entry "* %<%r>%?"
+  :target
+  (file+head "%<%Y-%m-%d>.org" "#+TITLE: %<%Y-%m-%d %A | week %W | day %j>\n"))))
+#+END_SRC
+
+** ORG-TODO
+
+TODO workflows and color settings
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+        (quote ((sequence "TODO(t)" "|" "DONE(d)"))))
+
+  (setq org-todo-keyword-faces
+        (quote (("TODO" :foreground "orange" :weight bold)
+                ("DONE" :foreground "forest green" weight bold))))
+#+END_SRC
+
+Fast TODO selection
+#+BEGIN_SRC emacs-lisp
+(setq org-use-fast-todo-selection t)
+#+END_SRC
+
+** ORG-CAPTURE
+
+For templates, the =%a= option will add a link to the current file/header, which is great to provide context
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-default-notes-file (concat org-directory "/inbox.org"))
+
+  (setq org-capture-templates
+        (quote (("t" "TODO" entry (file org-default-notes-file)
+                 "* TODO %?\n%a\n")
+                ("r" "Reminder" entry (file org-default-notes-file)
+                 "* TODO %?\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a>>\")\n")
+                ("j" "Journal" entry (file org-default-notes-file)
+                 "* %?\n"))))
+#+END_SRC
+
+** ORG-AGENDA
+Setup org-agenda directories after org-roam, since we want to fetch TODOs from org-roam notes
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files (append org-agenda-files
+                                 (directory-files-recursively org-directory "\\.org$")
+                                 (directory-files-recursively org-roam-directory "\\.org$")))
 #+END_SRC
 
 * OS SPECIFIC
@@ -802,6 +857,13 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
             which-key-separator " → " ))
 #+END_SRC
 
+* KEY BINDINGS
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
 * FUTURE WORK
 
 - [ ] Move things like Elpaca config to their own files.
@@ -809,4 +871,6 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
 - [ ] Fix Windows eshell and git issues.
 
 * REFERENCES
+
 - [[https://youtu.be/AyhPmypHDEw?si=sySufrf72E2dXoQ4][Getting Started with ORG-ROAM - Build a Second Brain in Emacs]]
+- [[https://doc.norang.ca/org-mode.html][Org Mode - Organize Your Life In Plain Text!]]

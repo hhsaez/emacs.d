@@ -17,3 +17,4 @@ custom.el
 #bookmarks#
 .org-id-locations
 org-roam.db
+elpa/
