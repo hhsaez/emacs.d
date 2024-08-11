@@ -50,6 +50,7 @@ Please note that this is organized based on what works for me.
   - [[#org-todo][ORG-TODO]]
   - [[#org-capture][ORG-CAPTURE]]
   - [[#org-agenda][ORG-AGENDA]]
+  - [[#org-log][ORG-LOG]]
 - [[#os-specific][OS SPECIFIC]]
   - [[#macos][MacOS]]
   - [[#windows][Windows]]
@@ -603,6 +604,11 @@ If set to nil, org will try to get the width from an #+ATTR* keyword and fall ba
   (add-to-list 'org-modules 'org-habit t)
 #+END_SRC
 
+Position the habit graph on the agenda to the right by default
+#+BEGIN_SRC emacs-lisp
+(setq org-habit-graph-column 50)
+#+END_SRC
+
 ** ORG-ROAM
 
 **IMPORTANT:** Ensure the org-roam directory exists **BEFORE** using org-roam.
@@ -659,9 +665,9 @@ TODO workflows and color settings
                 ("DONE" :foreground "forest green" weight bold))))
 #+END_SRC
 
-Fast TODO selection
+Fast TODO selection is disabled, since we only have a simple workflow. Maybe in the future we can enable it again.
 #+BEGIN_SRC emacs-lisp
-(setq org-use-fast-todo-selection t)
+(setq org-use-fast-todo-selection nil)
 #+END_SRC
 
 ** ORG-CAPTURE
@@ -676,6 +682,8 @@ For templates, the =%a= option will add a link to the current file/header, which
                  "* TODO %?\n%a\n")
                 ("r" "Reminder" entry (file org-default-notes-file)
                  "* TODO %?\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a>>\")\n")
+                ("e" "Event" entry (file org-default-notes-file)
+                 "* TODO %?\nDEADLINE: %(format-time-string \"%<<%Y-%m-%d>>\")\n")
                 ("j" "Journal" entry (file org-default-notes-file)
                  "* %?\n"))))
 #+END_SRC
@@ -686,6 +694,54 @@ Setup org-agenda directories after org-roam, since we want to fetch TODOs from o
   (setq org-agenda-files (append org-agenda-files
                                  (directory-files-recursively org-directory "\\.org$")
                                  (directory-files-recursively org-roam-directory "\\.org$")))
+#+END_SRC
+
+Agenda views
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        (quote (("h" "Habits" tags-todo "STYLE=\"habit\""
+                 ((org-agenda-overriding-header "Habits")
+                  (org-agenda-sorting-strategy
+                   '(todo-state-down effort-up category-keep))))
+                ("D" "Daily Planning"
+                 ((agenda ""
+                          ((org-agenda-overriding-header "Completed Tasks")
+                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'done))
+                           (org-agenda-span 'day)))
+                  (agenda ""
+                          ((org-agenda-overriding-header "Unfinished Scheduled Tasks")
+                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                           (org-deadline-warning-days 0)
+                           (org-agenda-span 'day)))
+                  (agenda ""
+                          ((org-agenda-overriding-header "Tomorrow")
+                           (org-agenda-span 'day)
+                           (org-agenda-start-day "+1d")
+                           (org-deadline-warning-days 1)))
+                  (tags "REFILE"
+                        ((org-agenda-overriding-header "Tasks to Refile")
+                         (org-tags-match-list-sublevel nil)))))
+                ("W" "Weekly Planning"
+                 ((agenda "" ((org-agenda-span 'fortnight)
+                              (org-deadline-warning-days 14)))
+                  (tags "REFILE"
+                        ((org-agenda-overriding-header "Tasks to Refile")
+                         (org-tags-match-list-sublevel nil)))))
+                (" " "Agenda"
+                 ((agenda "" ((org-agenda-span 'day)))
+                  (tags "REFILE"
+                        ((org-agenda-overriding-header "Inbox")
+                         (org-tags-match-list-sublevel nil)))
+                  )
+                 ))))
+#+END_SRC
+
+** ORG-LOG
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done (quote time))
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-into-drawer t)
 #+END_SRC
 
 * OS SPECIFIC
