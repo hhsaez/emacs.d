@@ -658,7 +658,8 @@ If the =org-roam-directory= variable is still not set immediately upon startup (
 TODO workflows and color settings
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords
-        (quote ((sequence "TODO(t)" "|" "DONE(d)"))))
+        (quote ((sequence "TODO" "|" "DONE")
+                (sequence "PROJ(p)" "INPROGRESS(i)" "|" "COMPLETED(c)" "ABANDONED(a)"))))
 
   (setq org-todo-keyword-faces
         (quote (("TODO" :foreground "orange" :weight bold)
@@ -667,7 +668,7 @@ TODO workflows and color settings
 
 Fast TODO selection is disabled, since we only have a simple workflow. Maybe in the future we can enable it again.
 #+BEGIN_SRC emacs-lisp
-(setq org-use-fast-todo-selection nil)
+(setq org-use-fast-todo-selection 'auto)
 #+END_SRC
 
 ** ORG-CAPTURE
@@ -722,13 +723,26 @@ Agenda views
                         ((org-agenda-overriding-header "Tasks to Refile")
                          (org-tags-match-list-sublevel nil)))))
                 ("W" "Weekly Planning"
-                 ((agenda "" ((org-agenda-span 'fortnight)
-                              (org-deadline-warning-days 14)))
+                 ((agenda ""
+                          ((org-agenda-overriding-header "Completed Tasks")
+                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'done))
+                           (org-agenda-span 'week)))
+                  (agenda ""
+                          ((org-agenda-overriding-header "Unfinished Scheduled Tasks")
+                           (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                           (org-deadline-warning-days 0)
+                           (org-agenda-span 'week)))
+                  (agenda ""
+                          ((org-agenda-overriding-header "Next Week")
+                           (org-agenda-span 'week)
+                           (org-agenda-start-day "+1w")
+                           (org-deadline-warning-days 14)))
                   (tags "REFILE"
                         ((org-agenda-overriding-header "Tasks to Refile")
                          (org-tags-match-list-sublevel nil)))))
                 (" " "Agenda"
-                 ((agenda "" ((org-agenda-span 'day)))
+                 ((agenda "" ((org-agenda-span 'day)
+                              (org-deadline-warning-days 1)))
                   (tags "REFILE"
                         ((org-agenda-overriding-header "Inbox")
                          (org-tags-match-list-sublevel nil)))
