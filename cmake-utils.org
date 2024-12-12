@@ -5,108 +5,170 @@
 #+OPTIONS: toc:4
 
 * TABLE OF CONTENTS :toc:
-- [[#project-directory][PROJECT DIRECTORY]]
-- [[#paths][PATHS]]
-- [[#reset][RESET]]
 - [[#configure][CONFIGURE]]
+- [[#build-target-selection][BUILD TARGET SELECTION]]
 - [[#build][BUILD]]
+- [[#run][RUN]]
 - [[#test][TEST]]
-
-* PROJECT DIRECTORY
-
-#+BEGIN_SRC emacs-lisp
-  (defvar cmake-project-dir nil
-    "CMake project directory.")
-
-  (defun cmake-set-project-dir (project-dir)
-    "Set CMake project directory."
-    (interactive (list (read-directory-name "Project Directory: ")))
-    (setq cmake-project-dir project-dir))
-
-  (defun cmake-validate-project-dir ()
-    "Check if there is a valid project directory set."
-    (unless cmake-project-dir
-      (error "Project directory was not set")))
-#+END_SRC
-
-* PATHS
-
-#+BEGIN_SRC emacs-lisp
-  (defun cmake-project-source-path ()
-    "Return the source directory for current cmake project."
-    (cmake-validate-project-dir)
-    cmake-project-dir)
-
-  (defun cmake-project-build-path ()
-    "Return the build directory for current cmake project."
-    (cmake-validate-project-dir)
-    (concat cmake-project-dir "build"))
-#+END_SRC
-
-* RESET
-
-#+BEGIN_SRC emacs-lisp
-  (defun cmake-reset-project-dir ()
-    "Reset project directory."
-    (interactive)
-    (setq cmake-project-dir nil))
-
-#+END_SRC
 
 * CONFIGURE
 
-#+BEGIN_SRC emacs-lisp
-  (defun cmake-project-configure-command ()
-    "Return the compilation command for building a project."
-    (concat "cmake -S " (cmake-project-source-path) " -B " (cmake-project-build-path)))
+This section defines a function to configure CMake projects in Emacs.
 
-  (defun cmake-configure ()
-    "Configure CMake project."
+#+BEGIN_SRC emacs-lisp
+  (defvar cmake-default-build-dir "build"
+    "Default directory for CMake build files within a project.")
+
+  (defun cmake-configure-project ()
+    "Configure a CMake project using Projectile to find the project root."
     (interactive)
-    (cmake-validate-project-dir)
-    (setq compile-command (cmake-project-configure-command))
-    (call-interactively 'compile))
+        (require 'projectile)
+        (let* ((project-root (projectile-project-root))
+               (build-dir (concat project-root (or cmake-default-build-dir "build"))))
+          (if project-root
+              (progn
+                (unless (file-directory-p build-dir)
+                  (make-directory build-dir))
+                (let ((default-directory project-root))
+                  (compile (format "cmake -S %s -B %s" project-root build-dir))))
+            (message "No Projectile project found or no CMakeLists.txt in the project root."))))
+#+END_SRC
+
+* BUILD TARGET SELECTION
+
+#+BEGIN_SRC emacs-lisp
+  (defvar cmake-selected-target nil
+    "The currently selected CMake build target.")
+
+  (defun cmake-select-build-target ()
+    "Select a build target from the CMake cache and store it for later use."
+    (interactive)
+    (message "New version of cmake-select-target is running")
+    (require 'projectile)
+    (let* ((project-root (projectile-project-root))
+           (build-dir (concat project-root (or cmake-default-build-dir "build")))
+           (cache-file (concat build-dir "/CMakeCache.txt"))
+           (targets (condition-case err
+                        (cmake-extract-targets build-dir)
+                      (error
+                       (message "Error extracting targets: %s" err)
+                       nil)))) ;; Handle extraction errors
+      (setq cmake-selected-target
+            (if (and targets (not (null targets)))
+                ;; If targets are found, offer a choice
+                (completing-read "Select a taret: " targets nil t)
+              ;; Otherwise, prompt for manual input
+              (read-string "No targets found. Enter a target name manually: ")))
+        (message "Selected target: %s" cmake-selected-target)))
+
+  ;; Helper function to extract targets
+  (defun cmake-extract-targets (build-dir)
+    "Extract build targets from the CMake cache in BUILD-DIR."
+    (let ((cmake-file-api-dir (concat build-dir "/.cmake/api/v1/reply"))
+          (targets nil))
+      (if (file-directory-p cmake-file-api-dir)
+          (progn
+            (dolist (file (directory-files cmake-file-api-dir t ".*\\.json$"))
+              (with-temp-buffer
+                (insert-file-contents file)
+                (goto-char (point-min))
+                (while (re-search-forward "\"name\":\\s-*\"\\(.*?\\)\"" nil t)
+                  (push (match-string 1) targets))))
+            (delete-dups targets))
+        (message "CMake file API directory not found. Ensure CMake is configured with file API support."))
+      targets)) ;; Return nil if no targets are found
 #+END_SRC
 
 * BUILD
 
 #+BEGIN_SRC emacs-lisp
-  (defvar cmake-build-target nil
-    "CMake current build target.")
-
-  (defun cmake-set-build-target (build-target)
-    "Set CMake current build target."
-    (interactive "MBuild Target: ")
-    (setq cmake-build-target build-target))
-
-  (defun cmake-project-build-command ()
-    "Return the compilation command for building a project."
-    (if cmake-build-target
-        (concat "cmake --build " (cmake-project-build-path) " --target " cmake-build-target)
-    (concat "cmake --build " (cmake-project-build-path))))
-
-  (defun cmake-build ()
-    "Build CMake project."
+  (defun cmake-build-target ()
+    "Build the currently selected CMake target."
     (interactive)
-    (cmake-validate-project-dir)
-    (setq compile-command (cmake-project-build-command))
-    (call-interactively 'compile))
+    (require 'projectile)
+    (let* ((project-root (projectile-project-root))
+           (build-dir (concat project-root (or cmake-default-build-dir "build")))
+           (target-name (if (and cmake-selected-target
+                                 (not (string-empty-p cmake-selected-target)))
+                            cmake-selected-target
+                          (read-string "No target selected. Enter target name: "))))
+      (setq cmake-selected-target target-name) ;; Save the manual input for reuse
+      (if (and target-name (not (string-empty-p target-name)))
+          (compile (format "cmake --build %s --target %s" build-dir target-name))
+        (message "No valid target selected. Use `cmake-select-build-target` to choose a target."))))
+#+END_SRC
+
+* RUN
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-run-target()
+  "Run the executable for the currently selected CMake target or custom path."
+  (interactive)
+  (require 'projectile)
+  (let* ((project-root (projectile-project-root))
+         (build-dir (concat project-root (or cmake-default-build-dir "build")))
+         (target-name cmake-selected-target)
+         (default-executable (when target-name
+                                (cmake-find-executable build-dir target-name)))
+         (executable (or default-executable
+                         (read-file-name "Executable not found. Specify manually: " build-dir))))
+    (message "Running: %s" executable)
+    (async-shell-command executable "*CMake Target Output*")))
+
+  (defun cmake-find-executable (build-dir target-name)
+    "Recursively search for the TARGET-NAME executable in BUILD-DIR."
+    (let ((files (directory-files-recursively build-dir target-name)))
+      ;; Return the first matching file that is executable
+      (seq-find #'file-executable-p files)))
 #+END_SRC
 
 * TEST
 
+1. Run All Tests
+   - Call "M-x cmake-run-tests"
+   - All tests are executed in the build directory
+2. Run Specific Tests
+   - Call "C-u M-x cmake-run-tests"
+   - Enter the name or regex of the test(s) to run
+
 #+BEGIN_SRC emacs-lisp
-  (defun cmake-project-test-command ()
-    "Return the CTest command for testing the project."
-    (concat "ctest --test-dir " (cmake-project-build-path) " --stop-on-failure --output-on-failure"))
-
-  (defun cmake-test ()
-    "Test CMake project."
-    (interactive)
-    (cmake-validate-project-dir)
-    (setq compile-command (cmake-project-test-command))
-    (call-interactively 'compile))
-  ;;(provide 'cmake-utils)
-
-  ;;; cmake-utils.el ends here
+  (defun cmake-run-tests (&optional test-name)
+    "Run CTest in the build directory. If TEST-NAME is provided, only that test will run."
+    (interactive
+     (list (if current-prefix-arg
+               (read-string "Enter test name (regex): "))))
+    (require 'projectile)
+    (let* ((project-root (projectile-project-root))
+           (build-dir (concat project-root (or cmake-default-build-dir "build")))
+           (command (if test-name
+                        (format "ctest -R %s --output-on-failure --stop-on-failure" test-name)
+                      "ctest --ouput-on-failure --stop-on-failure")))
+           (if (file-exists-p build-dir)
+               (let ((default-directory build-dir))
+                 (compile command))
+             (message "Build directory '%s' does not exists. Did you configure the project?" build-dir))))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun cmake-run-tests-for-target ()
+    "Run CTest for tests associated with the currently selected build target.
+  If no target is selected, prompt for manual input."
+    (interactive)
+    (require 'projectile)
+    (let* ((project-root (projectile-project-root))
+           (build-dir (concat project-root (or cmake-default-build-dir "build")))
+           (target-name (or cmake-selected-target
+                            (read-string "No target selected. Enter target name manually: ")))
+           (test-pattern (read-string "Enter test name pattern (leave blank to use target name): "
+                                       target-name))  ;; Default to target name
+           (command (if (not (string-empty-p test-pattern))
+                        (format "ctest -R %s --output-on-failure" test-pattern)
+                      "ctest --output-on-failure")))
+      (if (file-exists-p build-dir)
+          (let ((default-directory build-dir))
+            (compile command))
+        (message "Build directory '%s' does not exist. Did you configure the project?" build-dir))))
+#+END_SRC
+
+#+RESULTS:
+: cmake-run-tests-for-target
