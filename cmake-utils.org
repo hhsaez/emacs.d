@@ -142,7 +142,7 @@ This section defines a function to configure CMake projects in Emacs.
            (build-dir (concat project-root (or cmake-default-build-dir "build")))
            (command (if test-name
                         (format "ctest -R %s --output-on-failure --stop-on-failure" test-name)
-                      "ctest --ouput-on-failure --stop-on-failure")))
+                      "ctest --output-on-failure --stop-on-failure")))
            (if (file-exists-p build-dir)
                (let ((default-directory build-dir))
                  (compile command))
