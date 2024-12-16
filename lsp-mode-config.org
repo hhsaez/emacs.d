@@ -1,0 +1,31 @@
+#+TITLE: Hernan's LSP-mode config for Emacs
+#+AUTHOR: Hernan Saez (hhsaez)
+#+DESCRIPTION: Modern Development with lsp-mode
+#+STARTUP: showeverything
+#+OPTIONS: toc:4
+
+* TABLE OF CONTENT :toc:
+- [[#language-servers][LANGUAGE SERVERS]]
+- [[#todo][TODO]]
+- [[#references][REFERENCES]]
+
+* LANGUAGE SERVERS
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :config
+    (lsp-enable-which-key-integration t))
+#+END_SRC
+
+#+RESULTS:
+
+* TODO
+- C/C++ IDE
+
+* REFERENCES
+- [[https://emacs-lsp.github.io/lsp-mode/][Language Server Protocol (lsp) for Emacs]]
+- [[https://www.youtube.com/live/E-NAM9U5JYE?si=m5o7q59AsSkpJCi1][Build Your Own IDE with lsp-mode]]
+- [[https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/][Configuring Emacs as a C/C++ IDE]]

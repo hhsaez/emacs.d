@@ -36,6 +36,7 @@ Please note that this is organized based on what works for me.
   - [[#disable-truncate-lines-in-prog-mode][Disable truncate lines in prog mode]]
 - [[#golden-ratio][GOLDEN RATIO]]
 - [[#ivy-counsel][IVY (COUNSEL)]]
+- [[#lsp-mode][LSP-MODE]]
 - [[#markdown-mode][MARKDOWN MODE]]
 - [[#modeline][MODELINE]]
 - [[#neotree][NEOTREE]]
@@ -503,6 +504,16 @@ By enabling this setting, we can press the up arrow (or C-p) when on the first c
   (setq-default ivy-use-selectable-prompt t)
 #+END_SRC
 
+* LSP-MODE
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-load-file
+ (expand-file-name
+  "lsp-mode-config.org"
+  user-emacs-directory))
+#+END_SRC
+
+
 * MARKDOWN MODE
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
@@ -947,7 +958,7 @@ Now, select our chosen theme, which is *hhsaez* by default, a theme that I creat
   ;;(load-theme 'hhsaez t)
 #+END_SRC
 
-Also, install themes from *doom-themes* so we can switch to a different one if we want to
+also, install themes from *doom-themes* so we can switch to a different one if we want to
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
     :ensure t
