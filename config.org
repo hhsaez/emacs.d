@@ -75,82 +75,79 @@ Please note that this is organized based on what works for me.
 ** Elpaca Package Manager
 The following code was extract as-is from Elpaca README.md file
 #+BEGIN_SRC emacs-lisp
-    (defvar elpaca-installer-version 0.5)
-    (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-    (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-    (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-    (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                                  :ref nil
-                                  :files (:defaults (:exclude "extensions"))
-                                  :build (:not elpaca--activate-package)))
-    (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-           (build (expand-file-name "elpaca/" elpaca-builds-directory))
-           (order (cdr elpaca-order))
-           (default-directory repo))
-      (add-to-list 'load-path (if (file-exists-p build) build repo))
-      (unless (file-exists-p repo)
-        (make-directory repo t)
-        (when (< emacs-major-version 28) (require 'subr-x))
-        (condition-case-unless-debug err
-            (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                     ((zerop (call-process "git" nil buffer t "clone"
-                                           (plist-get order :repo) repo)))
-                     ((zerop (call-process "git" nil buffer t "checkout"
-                                           (or (plist-get order :ref) "--"))))
-                     (emacs (concat invocation-directory invocation-name))
-                     ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                           "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                     ((require 'elpaca))
-                     ((elpaca-generate-autoloads "elpaca" repo)))
-                (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-              (error "%s" (with-current-buffer buffer (buffer-string))))
-          ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-      (unless (require 'elpaca-autoloads nil t)
-        (require 'elpaca)
-        (elpaca-generate-autoloads "elpaca" repo)
-        (load "./elpaca-autoloads")))
-    (add-hook 'after-init-hook #'elpaca-process-queues)
+  (defvar elpaca-installer-version 0.11)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                                :ref nil :depth 1 :inherit ignore
+                                :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (<= emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+          (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                    ,@(when-let* ((depth (plist-get order :depth)))
+                                                        (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                    ,(plist-get order :repo) ,repo))))
+                    ((zerop (call-process "git" nil buffer t "checkout"
+                                          (or (plist-get order :ref) "--"))))
+                    (emacs (concat invocation-directory invocation-name))
+                    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                          "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                    ((require 'elpaca))
+                    ((elpaca-generate-autoloads "elpaca" repo)))
+              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
   (elpaca `(,@elpaca-order))
 
   ;; Install use-package support
   (elpaca elpaca-use-package
-    ;; Enable :elpaca use-package keyword.
-    (elpaca-use-package-mode)
-    ;; Assume :elpaca t unless otherwise specified.
-    (setq elpaca-use-package-by-default t))
+    ;; Enable use-package :ensure support for Elpaca.
+    (elpaca-use-package-mode))
 
-  ;; Block until current queue processed.
-  (elpaca-wait)
-
-  ;;When installing a package which modifies a form used at the top-level
-  ;;(e.g. a package which adds a use-package key word),
-  ;;use `elpaca-wait' to block until that package has been installed/configured.
+  ;;When installing a package used in the init file itself,
+  ;;e.g. a package which adds a use-package key word,
+  ;;use the :wait recipe keyword to block until that package is installed/configured.
   ;;For example:
-  ;;(use-package general :demand t)
-  ;;(elpaca-wait)
+  ;;(use-package general :ensure (:wait t) :demand t)
 
   ;; Expands to: (elpaca evil (use-package evil :demand t))
-  (use-package evil :demand t)
+  (use-package evil :ensure t :demand t)
 
-  ;;Turns off elpaca-use-package-mode current declartion
-  ;;Note this will cause the declaration to be interpreted immediately (not deferred).
+  ;;Turns off elpaca-use-package-mode current declaration
+  ;;Note this will cause evaluate the declaration immediately. It is not deferred.
   ;;Useful for configuring built-in emacs features.
-  (use-package emacs :elpaca nil :config (setq ring-bell-function #'ignore))
+  (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
   ;; Don't install anything. Defer execution of BODY
-  (elpaca nil (message "deferred"))
+  ;;(elpaca nil (message "deferred"))
 #+END_SRC
 
 * ALL THE ICONS
  This is an icon set that can be used with dashboard, dired, ibuffer and other Emacs programs.
 
 #+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :ensure t
-  :if (display-graphic-p))
+  (use-package all-the-icons
+    :ensure t
+    :if (display-graphic-p))
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+  (use-package all-the-icons-dired
+    :ensure t
+    :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+END_SRC
 
 * AUTOMATICALLY REVERT BUFFERS FOR CHANGED FILES
@@ -293,7 +290,8 @@ Emacs Dashboard is an extensible startup screen showing you recent files, bookma
 This package implements hiding or abbreviation of the modeline displays (lighters) of minor-mode. With this package installed, you can add ':diminish' to any use-package block to hide that particular mode in the modeline.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package diminish)
+  (use-package diminish
+    :ensure t)
 #+END_SRC
 
 * DIRED
@@ -302,7 +300,8 @@ Use peep-dired to look at file contents as we moved in dired mode
 
 #+BEGIN_SRC emacs-lisp
   (use-package peep-dired
-    :after dired)
+    :after dired
+    :ensure t)
 #+END_SRC
 
 TODO: Enable *peep-dired* by default
@@ -462,6 +461,7 @@ Note: Seems this package is no longer actively maintained...
 #+BEGIN_SRC emacs-lisp
      (use-package counsel
        :after ivy
+       :ensure t
        :config (counsel-mode))
 
     (use-package ivy
@@ -537,6 +537,7 @@ NeoTree provides folliwng themes: classic, ascii, arrow, icons and nerd. Theme c
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
+    :ensure t
     :config
     (setq neo-smart-open t ; allows jumping to the current file
           neo-autorefresh t
@@ -565,6 +566,7 @@ Ensure this directory exists and that it points to the expected location. See RE
 ** Enabling Table of Contents
 #+BEGIN_SRC emacs-lisp
   (use-package toc-org
+    :ensure t
     :commands toc-org-enable
     :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+END_SRC
@@ -574,7 +576,8 @@ Org-bullets gives us attractive bullets rather than asterisks.
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (use-package org-bullets)
+  (use-package org-bullets
+    :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
@@ -865,6 +868,7 @@ Projectile is a project interaction library for Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
+    :ensure t
     :diminish
     :init
     (setq projectile-keymap-prefix (kbd "C-c p"))
