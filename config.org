@@ -983,10 +983,12 @@ Also, install themes from *doom-themes* so we can switch to a different one if w
 #+END_SRC
 
 * WHICH-KEY
+There seem to be issues with which-key on Windows. For now, enable it only on Macos (darwin)
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
-    :init
     :ensure t
+    :if (eq system-type 'darwin)
+    :init
     (which-key-mode 1)
     :diminish
     :config
