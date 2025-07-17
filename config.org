@@ -838,8 +838,8 @@ Agenda views
 
 #+BEGIN_SRC emacs-lisp
   (when (equal system-type 'darwin)
-    ;; (setq mac-option-modifier 'super)
-    ;; (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'super)
+    (setq mac-command-modifier 'meta)
     (setq ns-auto-hide-menu-bar nil)
     (setq ns-use-proxy-icon nil)
     (setq dired-use-ls-dired nil)
